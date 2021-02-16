@@ -4,3 +4,6 @@
 [submodule "vendor/record-sdk"]
 	path = include/record-sdk
 	url = git@github.com:ssast-tech/thuai-egg-record-sdk.git
+[submodule "tools/vcpkg"]
+	path = tools/vcpkg
+	url = https://github.com/microsoft/vcpkg
