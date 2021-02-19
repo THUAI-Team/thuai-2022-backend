@@ -1,5 +1,0 @@
-/Users/panda2134/Desktop/thuai/thuai-egg-2021-backend/CMakeFiles/rebuild_cache.dir
-/Users/panda2134/Desktop/thuai/thuai-egg-2021-backend/CMakeFiles/edit_cache.dir
-/Users/panda2134/Desktop/thuai/thuai-egg-2021-backend/CMakeFiles/egg2021.dir
-/Users/panda2134/Desktop/thuai/thuai-egg-2021-backend/include/json/CMakeFiles/rebuild_cache.dir
-/Users/panda2134/Desktop/thuai/thuai-egg-2021-backend/include/json/CMakeFiles/edit_cache.dir
