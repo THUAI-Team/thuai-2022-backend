@@ -123,6 +123,60 @@ egg2021/fast:
 	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/build
 .PHONY : egg2021/fast
 
+include/record-sdk/cpp_record_sdk/entities.o: include/record-sdk/cpp_record_sdk/entities.cpp.o
+
+.PHONY : include/record-sdk/cpp_record_sdk/entities.o
+
+# target to build an object file
+include/record-sdk/cpp_record_sdk/entities.cpp.o:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/include/record-sdk/cpp_record_sdk/entities.cpp.o
+.PHONY : include/record-sdk/cpp_record_sdk/entities.cpp.o
+
+include/record-sdk/cpp_record_sdk/entities.i: include/record-sdk/cpp_record_sdk/entities.cpp.i
+
+.PHONY : include/record-sdk/cpp_record_sdk/entities.i
+
+# target to preprocess a source file
+include/record-sdk/cpp_record_sdk/entities.cpp.i:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/include/record-sdk/cpp_record_sdk/entities.cpp.i
+.PHONY : include/record-sdk/cpp_record_sdk/entities.cpp.i
+
+include/record-sdk/cpp_record_sdk/entities.s: include/record-sdk/cpp_record_sdk/entities.cpp.s
+
+.PHONY : include/record-sdk/cpp_record_sdk/entities.s
+
+# target to generate assembly for a file
+include/record-sdk/cpp_record_sdk/entities.cpp.s:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/include/record-sdk/cpp_record_sdk/entities.cpp.s
+.PHONY : include/record-sdk/cpp_record_sdk/entities.cpp.s
+
+include/record-sdk/cpp_record_sdk/record.o: include/record-sdk/cpp_record_sdk/record.cpp.o
+
+.PHONY : include/record-sdk/cpp_record_sdk/record.o
+
+# target to build an object file
+include/record-sdk/cpp_record_sdk/record.cpp.o:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/include/record-sdk/cpp_record_sdk/record.cpp.o
+.PHONY : include/record-sdk/cpp_record_sdk/record.cpp.o
+
+include/record-sdk/cpp_record_sdk/record.i: include/record-sdk/cpp_record_sdk/record.cpp.i
+
+.PHONY : include/record-sdk/cpp_record_sdk/record.i
+
+# target to preprocess a source file
+include/record-sdk/cpp_record_sdk/record.cpp.i:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/include/record-sdk/cpp_record_sdk/record.cpp.i
+.PHONY : include/record-sdk/cpp_record_sdk/record.cpp.i
+
+include/record-sdk/cpp_record_sdk/record.s: include/record-sdk/cpp_record_sdk/record.cpp.s
+
+.PHONY : include/record-sdk/cpp_record_sdk/record.s
+
+# target to generate assembly for a file
+include/record-sdk/cpp_record_sdk/record.cpp.s:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/include/record-sdk/cpp_record_sdk/record.cpp.s
+.PHONY : include/record-sdk/cpp_record_sdk/record.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -150,6 +204,33 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+world.o: world.cpp.o
+
+.PHONY : world.o
+
+# target to build an object file
+world.cpp.o:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/world.cpp.o
+.PHONY : world.cpp.o
+
+world.i: world.cpp.i
+
+.PHONY : world.i
+
+# target to preprocess a source file
+world.cpp.i:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/world.cpp.i
+.PHONY : world.cpp.i
+
+world.s: world.cpp.s
+
+.PHONY : world.s
+
+# target to generate assembly for a file
+world.cpp.s:
+	$(MAKE) -f CMakeFiles/egg2021.dir/build.make CMakeFiles/egg2021.dir/world.cpp.s
+.PHONY : world.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -159,9 +240,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... egg2021"
+	@echo "... include/record-sdk/cpp_record_sdk/entities.o"
+	@echo "... include/record-sdk/cpp_record_sdk/entities.i"
+	@echo "... include/record-sdk/cpp_record_sdk/entities.s"
+	@echo "... include/record-sdk/cpp_record_sdk/record.o"
+	@echo "... include/record-sdk/cpp_record_sdk/record.i"
+	@echo "... include/record-sdk/cpp_record_sdk/record.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... world.o"
+	@echo "... world.i"
+	@echo "... world.s"
 .PHONY : help
 
 
