@@ -8,12 +8,18 @@
 
 namespace thuai {
 const double RADIUS = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0;
+
 struct World {
+
   Player* players[PLAYER_COUNT];
   Egg* eggs[EGG_COUNT];
-  b2World* b2world{nullptr};
-  nlohmann::json output_to_ai() const;
 
+  b2Body* b2players[PLAYER_COUNT];
+  b2Body* b2eggs[EGG_COUNT];
+  b2World* b2world{nullptr};
+
+  bool Update();
+  nlohmann::json output_to_ai() const;
   World();
   ~World();
 };

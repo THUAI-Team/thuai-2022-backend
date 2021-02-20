@@ -6,7 +6,6 @@
 
 namespace thuai {
   World::World() {
-    b2world = new b2World(b2Vec2(0,0));
     const double pi = acos(-1);
     {
       const double angle_delta = 2 * pi / (3 * 5), player_radius = RADIUS / 2;
@@ -32,17 +31,77 @@ namespace thuai {
         }
       }
     }
+    // ========== Box2d Related ==========
+    {
+      // Initialize b2World
+      b2world = new b2World(b2Vec2(0,0));
+      b2BodyDef groundBodyDef;
+      groundBodyDef.position.Set(0.0f, 0.0f);
+      b2Body* groundBody = b2world->CreateBody(&groundBodyDef);
+
+      b2CircleShape groundCircle;
+      groundCircle.m_radius = (RADIUS / 2);
+      b2PolygonShape goalBox;
+      goalBox.SetAsBox(GOAL_LENGTH, GOAL_WIDTH); // TODO: finish the goal region
+
+      groundBody->CreateFixture(&groundCircle, 0.0f);
+    }
+    {
+      // Initialize Players & eggs
+      for(int i = 0; i < PLAYER_COUNT; i++){
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position.Set(players[i]->position().x, players[i]->position().y);
+        b2players[i] = b2world->CreateBody(&bodyDef);
+        b2CircleShape dynamicBox;
+        dynamicBox.m_radius=.24f;
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &dynamicBox;
+        fixtureDef.friction = 0;
+        b2players[i]->CreateFixture(&fixtureDef);
+        b2MassData massdata;
+        massdata.mass = 50;
+        b2players[i]->SetMassData(&massdata);
+      }
+      for (int i = 0; i < EGG_COUNT; i++) {
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position.Set(eggs[i]->position().x, eggs[i]->position().y);
+        b2eggs[i] = b2world->CreateBody(&bodyDef);
+        b2CircleShape dynamicBox;
+        dynamicBox.m_radius = .35f;
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &dynamicBox;
+        fixtureDef.friction = 0;
+        b2eggs[i]->CreateFixture(&fixtureDef);
+        b2MassData massdata;
+        massdata.mass = 30;
+        b2eggs[i]->SetMassData(&massdata);
+      }
+    }
   }
 
   World::~World() {
-    for (int i = 0; i < PLAYER_COUNT; i++)
+    for (int i = 0; i < PLAYER_COUNT; i++) 
       delete players[i];
     for (int i = 0; i < EGG_COUNT; i++)
       delete eggs[i];
     delete b2world;
   }
 
-  nlohmann::json World::output_to_ai() const {
+  bool
+  thuai::World::Update()
+  {
+    // do something here
+    return true;
+
+
+    return false;
+  }
+
+  nlohmann::json
+  World::output_to_ai() const
+  {
     using json = nlohmann::json;
     json ret;
     ret["eggs"] = json::array();
@@ -82,4 +141,3 @@ namespace thuai {
     }
     return ret;
   }
-}
