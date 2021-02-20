@@ -12,7 +12,7 @@ struct World {
   Player* players[PLAYER_COUNT];
   Egg* eggs[EGG_COUNT];
   b2World* b2world{nullptr};
-  nlohmann::json output_to_ai(int) const;
+  nlohmann::json output_to_ai() const;
 
   World();
   ~World();

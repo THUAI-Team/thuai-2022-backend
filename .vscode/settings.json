@@ -3,6 +3,7 @@
   "C_Cpp.intelliSenseEngineFallback": "Disabled",
   "files.associations": {
     "random": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "istream": "cpp"
   }
 }

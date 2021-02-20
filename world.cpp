@@ -42,10 +42,9 @@ namespace thuai {
     delete b2world;
   }
 
-  nlohmann::json World::output_to_ai(int state) const {
+  nlohmann::json World::output_to_ai() const {
     using json = nlohmann::json;
     json ret;
-    ret["state"] = state;
     ret["eggs"] = json::array();
     ret["teams"] = {
       json::array(),
