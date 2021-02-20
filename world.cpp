@@ -5,6 +5,10 @@
 #include "world.h"
 
 namespace thuai {
+  double get_walk_speed_with_egg(double egg_score) {
+    return 3 - pow(1.07, egg_score - 10);
+  }
+  
   World::World() {
     const double pi = acos(-1);
     {
