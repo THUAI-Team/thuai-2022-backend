@@ -6,6 +6,7 @@
 
 namespace thuai {
   World::World() {
+    b2world = new b2World(b2Vec2(0,0));
     const double pi = acos(-1);
     {
       const double angle_delta = 2 * pi / (3 * 5), player_radius = RADIUS / 2;
@@ -38,6 +39,7 @@ namespace thuai {
       delete players[i];
     for (int i = 0; i < EGG_COUNT; i++)
       delete eggs[i];
+    delete b2world;
   }
 
   nlohmann::json World::output_to_ai(int state) const {
