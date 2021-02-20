@@ -30,7 +30,7 @@ int main(void) {
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
-
+      
     }
   }
 
