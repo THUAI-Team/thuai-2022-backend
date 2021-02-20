@@ -50,9 +50,52 @@ int main(void) {
           auto detail = json::parse(incoming_msg["content"]);
           if (detail["state"] == state) { // ensure that state is synchronized
             received_info[incoming_msg["player"]] = true;
-            // parse the action of AI: walking/stopping/running; which egg to try grabbing
-            // 
+            // parse the action of AI: walking/stopped/running; which egg to try grabbing
+            /*
+            {
+              "action": "stopped" | "walking" | "running"
+              "facing": Vector2,
+              "grab"?: number // try to grab? null for nothing
+              "drop"?: number // try to drop? radian / null
+            }
+            */
+            for (int i = 0; i < 4; i++) {
+              auto player_action = detail["actions"][i];
+              int player_id = i + incoming_msg["player"] * 4;
+              auto current_player = world->players[player_id];
+              if (current_player->status() == SLIPPED) {
+                continue; // when slipped, a player cannot do anything
+              }
 
+              //--------- handle movement ---------
+              if (player_action["action"] == "running" && world->players[player_id]->endurance() <= 0) {
+                player_action["action"] = "walking"; // unify all cases of walking
+              }
+              
+              Vec2D facing; 
+              facing.x = player_action["facing"]["x"]; facing.y = player_action["facing"]["y"];
+              facing = facing.normalized();
+              if (player_action["action"] == "running") {
+                current_player->set_status(RUNNING);
+                current_player->set_velocity(Vec2D{facing.x * RUN_SPEED, facing.y * RUN_SPEED});
+              } else if (player_action["action"] == "walking") {
+                current_player->set_status(WALKING);
+                int egg_holding = current_player->egg();
+                double walk_speed = WALK_SPEED_EMPTY;
+                if (egg_holding != -1) {
+                  walk_speed = get_walk_speed_with_egg(world->eggs[egg_holding]->score());
+                }
+                current_player->set_velocity(Vec2D{facing.x * walk_speed, facing.y * walk_speed});
+              } else if (player_action["action"] == "stopped") {
+                current_player->set_status(STOPPED);
+                current_player->set_velocity(Vec2D{.0, .0});
+              }
+              //--------- handle egg placement ---------
+              if (! player_action["drop"].is_null()) {
+                const double radian = player_action["drop"];
+                
+              }
+            }
           }
         } else {
           auto error_content = json::parse(incoming_msg["content"]);
@@ -65,6 +108,8 @@ int main(void) {
         }
         round_end |= received_info[0] && received_info[1] && received_info[2];
       }
+
+      // do the handling together
     }
   }
   {
