@@ -13,7 +13,8 @@ using json = nlohmann::json;
 using namespace thuai;
 
 const int FPS = 60, FRAME_COUNT = FPS * 60 * 2, FRAMES_PER_STATE = 6;
-
+constexpr const float TIMESTEP = 1.0f / float(FPS);
+const int32 velocityIterations = 10, positionIterations = 8;
 int main(void) {
   json init_msg, config;
   read_from_judger(init_msg);
@@ -29,9 +30,30 @@ int main(void) {
   write_to_judger(init_config, -1);
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
-    ;// <-- do the simulation here
+    world->b2world->Step(
+      TIMESTEP, velocityIterations, positionIterations); // do the simulation
+    if(!world->Update())
+        ; // err occurs
+ 
+
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
     if (cur_frame % FRAMES_PER_STATE == 0) {
+      
+      // set b2bodies' velocity from input
+
+      //for (int i = 0; i < PLAYER_COUNT; i++) {
+      //  world->b2players[i]->SetLinearVelocity(b2Vec2(
+      //  world->players[i]->velocity().x, world->players[i]->velocity().y));
+      //}
+      for (int i = 0; i < PLAYER_COUNT; i++)
+        world->players[i]->set_position(
+          { world->b2players[i]->GetPosition().x,
+            world->b2players[i]->GetPosition().y });
+
+      for (int i = 0; i < EGG_COUNT; i++)
+        world->eggs[i]->set_position({ world->b2eggs[i]->GetPosition().x,
+                                       world->b2eggs[i]->GetPosition().y });
+
       // handle the interaction every 0.1s
       // send game state first
       auto msg = world->output_to_ai();

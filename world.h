@@ -11,11 +11,16 @@ const inline double RADIUS = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0, RUN_SPE
 
 double get_walk_speed_with_egg(double);
 struct World {
+
   Player* players[PLAYER_COUNT];
   Egg* eggs[EGG_COUNT];
-  b2World* b2world{nullptr};
-  nlohmann::json output_to_ai() const;
 
+  b2Body* b2players[PLAYER_COUNT];
+  b2Body* b2eggs[EGG_COUNT];
+  b2World* b2world{nullptr};
+
+  bool Update();
+  nlohmann::json output_to_ai() const;
   World();
   ~World();
 };
