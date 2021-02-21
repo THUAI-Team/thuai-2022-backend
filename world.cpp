@@ -12,7 +12,7 @@ namespace thuai {
   World::World() {
     const double pi = acos(-1);
     {
-      const double angle_delta = 2 * pi / (3 * 5), player_radius = RADIUS / 2;
+      const double angle_delta = 2 * pi / (3 * 5), player_radius = DIAMETER / 4;
       double angle = .0;
       for (int i = 0; i < PLAYER_COUNT; i++) {
         if (i % 4 == 0) angle += angle_delta;
@@ -26,7 +26,7 @@ namespace thuai {
       std::mt19937 mtgen(rd());
       int egg_id = 0;
       for (double angle = 0; angle < 1.95 * pi; angle += 2 * pi / 3) {
-        const double egg_radius_delta = RADIUS / 6;
+        const double egg_radius_delta = DIAMETER / 12;
         for (int k = 1; k <= 5; k++, egg_id++) {
           double egg_radius = egg_radius_delta * k;
           double score = mtgen() * 10.0 / std::mt19937::max() + 10.0;       // score: [10, 20)
@@ -44,7 +44,7 @@ namespace thuai {
       b2Body* groundBody = b2world->CreateBody(&groundBodyDef);
 
       b2CircleShape groundCircle;
-      groundCircle.m_radius = (RADIUS / 2);
+      groundCircle.m_radius = (DIAMETER / 2);
       b2PolygonShape goalBox;
       goalBox.SetAsBox(GOAL_LENGTH, GOAL_WIDTH); // TODO: finish the goal region
 

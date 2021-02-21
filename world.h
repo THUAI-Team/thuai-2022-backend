@@ -7,7 +7,7 @@
 #include "nlohmann/json.hpp"
 
 namespace thuai {
-const inline double RADIUS = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0, RUN_SPEED = 4.0, WALK_SPEED_EMPTY = 2.0;
+const inline double DIAMETER = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0, RUN_SPEED = 4.0, WALK_SPEED_EMPTY = 2.0;
 
 double get_walk_speed_with_egg(double);
 struct World {
