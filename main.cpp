@@ -21,11 +21,17 @@ int main(void) {
   if (init_msg["player_num"] != 3) {
     return 1; // need 3 players
   }
+  bool is_offline[] = {false, false, false};
+  for (int i = 0; i < 3; i++) {
+    if (init_msg["player_list"][i] == 0) {
+      is_offline[i] = true;
+    }
+  }
 
   Record record(FPS);
   std::shared_ptr<World> world(std::make_shared<World>());
 
-  json init_config = R"({"state": 0, "time": 0.1, "length": 4096})"_json;
+  auto init_config = R"({"state": 0, "time": 0.1, "length": 4096})"_json;
 
   write_to_judger(init_config, -1);
 
@@ -38,22 +44,6 @@ int main(void) {
 
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
     if (cur_frame % FRAMES_PER_STATE == 0) {
-      
-      // set b2bodies' velocity from input
-
-      //for (int i = 0; i < PLAYER_COUNT; i++) {
-      //  world->b2players[i]->SetLinearVelocity(b2Vec2(
-      //  world->players[i]->velocity().x, world->players[i]->velocity().y));
-      //}
-      for (int i = 0; i < PLAYER_COUNT; i++)
-        world->players[i]->set_position(
-          { world->b2players[i]->GetPosition().x,
-            world->b2players[i]->GetPosition().y });
-
-      for (int i = 0; i < EGG_COUNT; i++)
-        world->eggs[i]->set_position({ world->b2eggs[i]->GetPosition().x,
-                                       world->b2eggs[i]->GetPosition().y });
-
       // handle the interaction every 0.1s
       // send game state first
       auto msg = world->output_to_ai();
@@ -126,16 +116,34 @@ int main(void) {
         } else {
           auto error_content = json::parse(incoming_msg["content"]);
           if (error_content["error"] == 0) {
-            received_info[error_content["player"]] = true;
+            is_offline[error_content["player"]] = true; // 掉线了
           } else if (error_content["error"] == 1) {
             assert(error_content["player"] == state);
             round_end = true;
           }
         }
-        round_end |= received_info[0] && received_info[1] && received_info[2];
+        round_end |= (received_info[0] || is_offline[0])
+                  && (received_info[1] || is_offline[1]) 
+                  && (received_info[2] || is_offline[2]);
       }
 
       // do the handling together
+      // TODO: call world method to handle
+      
+      // set b2bodies' velocity from input
+
+      //for (int i = 0; i < PLAYER_COUNT; i++) {
+      //  world->b2players[i]->SetLinearVelocity(b2Vec2(
+      //  world->players[i]->velocity().x, world->players[i]->velocity().y));
+      //}
+      for (int i = 0; i < PLAYER_COUNT; i++)
+        world->players[i]->set_position(
+          { world->b2players[i]->GetPosition().x,
+            world->b2players[i]->GetPosition().y });
+
+      for (int i = 0; i < EGG_COUNT; i++)
+        world->eggs[i]->set_position({ world->b2eggs[i]->GetPosition().x,
+                                       world->b2eggs[i]->GetPosition().y });
     }
   }
   {
@@ -152,7 +160,7 @@ int main(void) {
     }), -1);
   }
 
-  std::ofstream of(init_msg["replay"], std::ios::binary);
+  std::ofstream of(std::string(init_msg["replay"]), std::ios::binary);
   record.serialize(of);
 
   return 0;
