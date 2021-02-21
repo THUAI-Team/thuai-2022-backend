@@ -20,7 +20,7 @@ struct World {
   b2Body *b2players[PLAYER_COUNT];
   b2Body *b2eggs[EGG_COUNT];
   b2World *b2world{nullptr};
-  bool Update(float timestep, int32 velocityIterations,
+  bool Update(int FPS, int32 velocityIterations,
               int32 positionIterations);
   json output_to_ai() const;
   void read_from_team_action(Team team, json detail);
