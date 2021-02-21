@@ -118,25 +118,16 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
       player_action["action"] = "walking"; // unify all cases of walking
     }
 
-    Vec2D facing;
-    facing.x = player_action["facing"]["x"];
-    facing.y = player_action["facing"]["y"];
+    Vec2D facing{ player_action["facing"]["x"], player_action["facing"]["y"] };
     facing = facing.normalized();
+    current_player->set_facing(facing);
+
     if (player_action["action"] == "running") {
       current_player->set_status(RUNNING);
-
     } else if (player_action["action"] == "walking") {
       current_player->set_status(WALKING);
-      int egg_holding = current_player->egg();
-      double walk_speed = WALK_SPEED_EMPTY;
-      if (egg_holding != -1) {
-        walk_speed = get_walk_speed_with_egg(eggs[egg_holding]->score());
-      }
-      //current_player->set_velocity(
-      //    Vec2D{facing.x * walk_speed, facing.y * walk_speed});
     } else if (player_action["action"] == "stopped") {
       current_player->set_status(STOPPED);
-      current_player->set_velocity(Vec2D{.0, .0});
     }
     //--------- handle egg placement ---------
     if (!player_action["drop"].is_null()) {
@@ -151,33 +142,49 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
   }
 }
 
-bool thuai::World::Update(float timestep, int32 velocityIterations,
+bool thuai::World::Update(int FPS, int32 velocityIterations,
                           int32 positionIterations) {
   try {
-    b2world->Step(timestep, velocityIterations,
-                  positionIterations); // do the simulation
+    static const float timestep = 1.0f / float(FPS);
+
+
     for (int i = 0; i < PLAYER_COUNT; i++) {
       auto currentPlayer = players[i];
-      switch (currentPlayer->status()) {
-        case PlayerStatus::WALKING:
-          float newendurance = currentPlayer->endurance() + 1 / 60.0;
-          currentPlayer->set_endurance(newendurance > 5? 5 : newendurance);
-          break;
-        case PlayerStatus::RUNNING:
-            if (currentPlayer->endurance() > 0) {
-            /*currentPlayer->set_velocity(
-            Vec2D{facing.x * RUN_SPEED, facing.y * RUN_SPEED});*/
-          }
-          break;
-        default:
-          break;
+      auto b2currentPlayer = b2players[i];
+      if (currentPlayer->status() == PlayerStatus::RUNNING)
+        if (currentPlayer->endurance() > 4.0 / float(FPS)) {
+          currentPlayer->set_endurance(currentPlayer->endurance() -
+                                       4.0 / float(FPS));
+          b2currentPlayer->SetLinearVelocity(
+            { float(currentPlayer->facing().x * RUN_SPEED),
+              float(currentPlayer->facing().y * RUN_SPEED) });
+
+        } else
+          currentPlayer->set_status(PlayerStatus::WALKING);
+      if (currentPlayer->status() == PlayerStatus::WALKING) {
+        float newendurance = currentPlayer->endurance() + 0.5 / float(FPS);
+        currentPlayer->set_endurance(newendurance > 5 ? 5 : newendurance);
+        int egg_holding = currentPlayer->egg();
+        double walk_speed = WALK_SPEED_EMPTY;
+        if (egg_holding != -1) {
+          walk_speed = get_walk_speed_with_egg(eggs[egg_holding]->score());
+        }
+        b2currentPlayer->SetLinearVelocity(
+          { float(currentPlayer->facing().x * walk_speed),
+            float(currentPlayer->facing().y * walk_speed) });
       }
+      if (currentPlayer->status() == PlayerStatus::STOPPED) {
+        float newendurance = currentPlayer->endurance() + 1 / float(FPS);
+        currentPlayer->set_endurance(newendurance > 5 ? 5 : newendurance);
+        b2currentPlayer->SetLinearVelocity({ .0, .0 });
+      }
+
     }
 
 
-
-
-
+    b2world->Step(timestep,
+                  velocityIterations,
+                  positionIterations); // do the simulation
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
         players[i]->set_position(
