@@ -82,7 +82,7 @@ int main(void) {
         json incoming_msg;
         read_from_judger(incoming_msg);
         if (incoming_msg["player"] >= 0) {
-          auto detail = json::parse(incoming_msg["content"]);
+          auto detail = json::parse(std::string(incoming_msg["content"]));
           if (detail["state"] == state) { // ensure that state is synchronized
             received_info[incoming_msg["player"]] = true;
             // parse the action of AI: walking/stopped/running; which egg to try grabbing
@@ -96,7 +96,7 @@ int main(void) {
             */
             for (int i = 0; i < 4; i++) {
               auto player_action = detail["actions"][i];
-              int player_id = i + incoming_msg["player"] * 4;
+              int player_id = i + int(incoming_msg["player"]) * 4;
               auto current_player = world->players[player_id];
               if (current_player->status() == SLIPPED) {
                 continue; // when slipped, a player cannot do anything
@@ -137,7 +137,7 @@ int main(void) {
             }
           }
         } else {
-          auto error_content = json::parse(incoming_msg["content"]);
+          auto error_content = json::parse(std::string(incoming_msg["content"]));
           if (error_content["error"] == 0) {
             is_offline[error_content["player"]] = true; // 掉线了
           } else if (error_content["error"] == 1) {
