@@ -19,7 +19,7 @@ struct World {
   b2Body* b2eggs[EGG_COUNT];
   b2World* b2world{nullptr};
 
-  bool Update();
+  bool Update(float timestep,int32 velocityIterations,int32 positionIterations);
   nlohmann::json output_to_ai() const;
   World();
   ~World();

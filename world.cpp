@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <exception>
 #include "world.h"
 
 namespace thuai {
@@ -94,9 +95,33 @@ namespace thuai {
   }
 
   bool
-  thuai::World::Update()
+  thuai::World::Update(float timestep, int32 velocityIterations, int32 positionIterations)
   {
-    // do something here
+      try {
+          b2world->Step(
+              timestep, velocityIterations, positionIterations); // do the simulation
+          for (int i = 0; i < PLAYER_COUNT; i++) {
+              players[i]->set_position(
+                  { b2players[i]->GetPosition().x,
+                    b2players[i]->GetPosition().y });
+              players[i]->set_velocity(
+                  { b2players[i]->GetLinearVelocity().x,
+                    b2players[i]->GetLinearVelocity().y }
+              );
+          }
+
+          for (int i = 0; i < EGG_COUNT; i++) {
+              eggs[i]->set_position({ b2eggs[i]->GetPosition().x,
+                                              b2eggs[i]->GetPosition().y });
+              eggs[i]->set_velocity(
+                  {b2eggs[i]->GetLinearVelocity().x,
+                   b2eggs[i]->GetLinearVelocity().y }
+              );
+          }
+      }
+      catch (std::exception& e) {
+
+    }
     return true;
 
 
