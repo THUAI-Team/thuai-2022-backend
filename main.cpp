@@ -128,11 +128,11 @@ int main(void) {
               //--------- handle egg placement ---------
               if (! player_action["drop"].is_null()) {
                 const double radian = player_action["drop"];
-
+              // TODO: resolve if two eggs to be placed at conflicted posistion
               }
               if (! player_action["grab"].is_null()) {
                 const double egg_target = player_action["grab"];
-                
+              // TODO: make sure only the nearest player grab the egg
               }
             }
           }
@@ -157,7 +157,11 @@ int main(void) {
 
       for (int i = 0; i < PLAYER_COUNT; i++) {
         world->b2players[i]->SetLinearVelocity(b2Vec2(
-        world->players[i]->velocity().x, world->players[i]->velocity().y));
+        float(world->players[i]->velocity().x), float(world->players[i]->velocity().y)));
+      }
+      for (int i = 0; i < EGG_COUNT; i++) {
+        world->b2eggs[i]->SetLinearVelocity(b2Vec2(
+        float(world->eggs[i]->velocity().x), float(world->eggs[i]->velocity().y)));
       }
     }
   }
