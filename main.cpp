@@ -40,7 +40,25 @@ int main(void) {
       TIMESTEP, velocityIterations, positionIterations); // do the simulation
     if(!world->Update())
         ; // err occurs
- 
+
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+      world->players[i]->set_position(
+        { world->b2players[i]->GetPosition().x,
+          world->b2players[i]->GetPosition().y });
+      world->players[i]->set_velocity(
+        { world->b2players[i]->GetLinearVelocity().x,
+          world->b2players[i]->GetLinearVelocity().y }
+      );
+    }
+
+    for (int i = 0; i < EGG_COUNT; i++) {
+      world->eggs[i]->set_position({ world->b2eggs[i]->GetPosition().x,
+                                      world->b2eggs[i]->GetPosition().y });
+      world->eggs[i]->set_velocity(
+        { world->b2eggs[i]->GetLinearVelocity().x,
+          world->b2eggs[i]->GetLinearVelocity().y }
+      );
+    }
 
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
     if (cur_frame % FRAMES_PER_STATE == 0) {
@@ -132,18 +150,10 @@ int main(void) {
       
       // set b2bodies' velocity from input
 
-      //for (int i = 0; i < PLAYER_COUNT; i++) {
-      //  world->b2players[i]->SetLinearVelocity(b2Vec2(
-      //  world->players[i]->velocity().x, world->players[i]->velocity().y));
-      //}
-      for (int i = 0; i < PLAYER_COUNT; i++)
-        world->players[i]->set_position(
-          { world->b2players[i]->GetPosition().x,
-            world->b2players[i]->GetPosition().y });
-
-      for (int i = 0; i < EGG_COUNT; i++)
-        world->eggs[i]->set_position({ world->b2eggs[i]->GetPosition().x,
-                                       world->b2eggs[i]->GetPosition().y });
+      for (int i = 0; i < PLAYER_COUNT; i++) {
+        world->b2players[i]->SetLinearVelocity(b2Vec2(
+        world->players[i]->velocity().x, world->players[i]->velocity().y));
+      }
     }
   }
   {
