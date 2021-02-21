@@ -103,7 +103,8 @@ int main(void) {
               }
 
               //--------- handle movement ---------
-              if (player_action["action"] == "running" && world->players[player_id]->endurance() <= 0) {
+              if (player_action["action"] == "running" 
+                && (world->players[player_id]->endurance() <= 0 || world->players[player_id]->egg() != -1)) {
                 player_action["action"] = "walking"; // unify all cases of walking
               }
               
