@@ -1,4 +1,5 @@
 #include "world.h"
+#include "entities_json.h"
 #include <cmath>
 #include <exception>
 #include <random>
@@ -117,15 +118,13 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
     }
 
     Vec2D facing;
-    facing.x = player_action["facing"]["x"];
-    facing.y = player_action["facing"]["y"];
+    player_action["facing"].get_to(facing);
     facing = facing.normalized();
+    current_player->set_status(player_action["action"].get<PlayerStatus>());
     if (player_action["action"] == "running") {
-      current_player->set_status(RUNNING);
       current_player->set_velocity(
           Vec2D{facing.x * RUN_SPEED, facing.y * RUN_SPEED});
     } else if (player_action["action"] == "walking") {
-      current_player->set_status(WALKING);
       int egg_holding = current_player->egg();
       double walk_speed = WALK_SPEED_EMPTY;
       if (egg_holding != -1) {
@@ -134,7 +133,6 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
       current_player->set_velocity(
           Vec2D{facing.x * walk_speed, facing.y * walk_speed});
     } else if (player_action["action"] == "stopped") {
-      current_player->set_status(STOPPED);
       current_player->set_velocity(Vec2D{.0, .0});
     }
     //--------- handle egg placement ---------
@@ -181,22 +179,19 @@ nlohmann::json World::output_to_ai() const {
   ret["teams"] = {json::array(), json::array(), json::array()};
   for (int i = 0; i < EGG_COUNT; i++) {
     ret["eggs"][i] = {
-        {"position",
-         {{"x", eggs[i]->position().x}, {"y", eggs[i]->position().y}}},
+        {"position", eggs[i]->position()},
         {"holder", -1} // set this later
     };
   }
-  const char *status_string[] = {"stopped", "slipped", "walking", "running"};
   for (int i = 0; i < PLAYER_COUNT; i++) {
     int team = players[i]->team(), sub_id = i % 4;
     auto facing = players[i]->velocity().normalized();
     int holding = players[i]->egg();
     ret["eggs"][holding]["holder"] = i;
     ret["teams"][team][sub_id] = {
-        {"position",
-         {{"x", players[i]->position().x}, {"y", players[i]->position().y}}},
-        {"status", status_string[players[i]->status()]},
-        {"facing", {{"x", facing.x}, {"y", facing.y}}}};
+        {"position", players[i]->position()},
+        {"status", players[i]->status()},
+        {"facing", facing}};
   }
   return ret;
 }

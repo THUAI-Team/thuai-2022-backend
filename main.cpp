@@ -7,6 +7,7 @@
 #include "cpp_record_sdk/entities.h"
 #include "cpp_record_sdk/record.h"
 #include "world.h"
+#include "entities_json.h"
 #include "stream_helper.h"
 
 using json = nlohmann::json;
