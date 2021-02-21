@@ -69,7 +69,12 @@ int main(void) {
         {"state", state},
         {"listen", {0, 1, 2}},
         {"player", {0, 1, 2}},
-        {"content", {msg, msg, msg}}
+        {"content", {
+          msg.patch(R"([{ "op": "add", "path": "/team", "value": 0 },])"_json),
+          msg.patch(R"([{ "op": "add", "path": "/team", "value": 1 },])"_json),
+          msg.patch(R"([{ "op": "add", "path": "/team", "value": 2 },])"_json),
+          }
+        }
       }), -1);
       // wait for ai reply
       bool round_end = false, received_info[] = {false, false, false};
