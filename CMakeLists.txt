@@ -10,7 +10,7 @@ message("Now building on:${CMAKE_SYSTEM_NAME}")
 
 # strange bug on windows
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-  set(unofficial-box2d_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x86-windows/share/unofficial-box2d")
+  set(unofficial-box2d_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x64-windows/share/unofficial-box2d")
 endif(CMAKE_SYSTEM_NAME MATCHES "Windows")
 
 # specify the C++ standard
