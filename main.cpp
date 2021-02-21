@@ -126,7 +126,7 @@ int main(void) {
 
               }
               if (! player_action["grab"].is_null()) {
-                const double radian = player_action["drop"];
+                const double egg_target = player_action["grab"];
                 
               }
             }
@@ -157,7 +157,7 @@ int main(void) {
     }
   }
   {
-    int r_score = 111, y_score = 222, b_score = 333;// calculate score
+    int r_score = 111, y_score = 222, b_score = 333; // calculate score
     record.set_score(r_score, y_score, b_score);
     json end_info = {
       {"0", r_score},
