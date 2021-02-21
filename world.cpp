@@ -15,7 +15,7 @@ double get_walk_speed_with_egg(double egg_score) {
 World::World() {
   const double pi = acos(-1);
   {
-    const double angle_delta = 2 * pi / (3 * 5), player_radius = DIAMETER / 4;
+    const double angle_delta = 2 * pi / 15, player_radius = DIAMETER / 4;
     double angle = .0;
     for (int i = 0; i < PLAYER_COUNT; i++) {
       if (i % 4 == 0)
@@ -34,8 +34,8 @@ World::World() {
       const double egg_radius_delta = DIAMETER / 12;
       for (int k = 1; k <= 5; k++, egg_id++) {
         double egg_radius = egg_radius_delta * k;
-        double score =
-            mtgen() * 10.0 / std::mt19937::max() + 10.0; // score: [10, 20)
+        int score =
+            int(mtgen() * 10.0 / std::mt19937::max() + 10.0); // score: [10, 20)
         eggs[egg_id] = new Egg(egg_id, score);
         eggs[egg_id]->set_position(
             {egg_radius * cos(angle), egg_radius * sin(angle)});
@@ -52,8 +52,10 @@ World::World() {
 
     b2CircleShape groundCircle;
     groundCircle.m_radius = (DIAMETER / 2);
-    b2PolygonShape goalBox;
-    goalBox.SetAsBox(GOAL_LENGTH, GOAL_WIDTH); // TODO: finish the goal region
+    b2PolygonShape goalBox[3];
+    for (auto &item:goalBox)
+        item.SetAsBox(GOAL_LENGTH, GOAL_WIDTH);
+    // TODO: finish the goal region
 
     groundBody->CreateFixture(&groundCircle, 0.0f);
   }
@@ -62,7 +64,7 @@ World::World() {
     for (int i = 0; i < PLAYER_COUNT; i++) {
       b2BodyDef bodyDef;
       bodyDef.type = b2_dynamicBody;
-      bodyDef.position.Set(players[i]->position().x, players[i]->position().y);
+      bodyDef.position.Set(float(players[i]->position().x), float(players[i]->position().y));
       b2players[i] = b2world->CreateBody(&bodyDef);
       b2CircleShape dynamicBox;
       dynamicBox.m_radius = .24f;
@@ -77,7 +79,7 @@ World::World() {
     for (int i = 0; i < EGG_COUNT; i++) {
       b2BodyDef bodyDef;
       bodyDef.type = b2_dynamicBody;
-      bodyDef.position.Set(eggs[i]->position().x, eggs[i]->position().y);
+      bodyDef.position.Set(float(eggs[i]->position().x), float(eggs[i]->position().y));
       b2eggs[i] = b2world->CreateBody(&bodyDef);
       b2CircleShape dynamicBox;
       dynamicBox.m_radius = .35f;
@@ -122,8 +124,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
     facing = facing.normalized();
     if (player_action["action"] == "running") {
       current_player->set_status(RUNNING);
-      current_player->set_velocity(
-          Vec2D{facing.x * RUN_SPEED, facing.y * RUN_SPEED});
+
     } else if (player_action["action"] == "walking") {
       current_player->set_status(WALKING);
       int egg_holding = current_player->egg();
@@ -131,8 +132,8 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
       if (egg_holding != -1) {
         walk_speed = get_walk_speed_with_egg(eggs[egg_holding]->score());
       }
-      current_player->set_velocity(
-          Vec2D{facing.x * walk_speed, facing.y * walk_speed});
+      //current_player->set_velocity(
+      //    Vec2D{facing.x * walk_speed, facing.y * walk_speed});
     } else if (player_action["action"] == "stopped") {
       current_player->set_status(STOPPED);
       current_player->set_velocity(Vec2D{.0, .0});
@@ -141,6 +142,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
     if (!player_action["drop"].is_null()) {
       const double radian = player_action["drop"];
       // TODO: resolve if two eggs to be placed at conflicted posistion
+
     }
     if (!player_action["grab"].is_null()) {
       const double egg_target = player_action["grab"];
@@ -155,10 +157,33 @@ bool thuai::World::Update(float timestep, int32 velocityIterations,
     b2world->Step(timestep, velocityIterations,
                   positionIterations); // do the simulation
     for (int i = 0; i < PLAYER_COUNT; i++) {
-      players[i]->set_position(
-          {b2players[i]->GetPosition().x, b2players[i]->GetPosition().y});
-      players[i]->set_velocity({b2players[i]->GetLinearVelocity().x,
-                                b2players[i]->GetLinearVelocity().y});
+      auto currentPlayer = players[i];
+      switch (currentPlayer->status()) {
+        case PlayerStatus::WALKING:
+          float newendurance = currentPlayer->endurance() + 1 / 60.0;
+          currentPlayer->set_endurance(newendurance > 5? 5 : newendurance);
+          break;
+        case PlayerStatus::RUNNING:
+            if (currentPlayer->endurance() > 0) {
+            /*currentPlayer->set_velocity(
+            Vec2D{facing.x * RUN_SPEED, facing.y * RUN_SPEED});*/
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+
+
+
+
+
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        players[i]->set_position(
+          { b2players[i]->GetPosition().x, b2players[i]->GetPosition().y });
+        players[i]->set_velocity({ b2players[i]->GetLinearVelocity().x,
+                                   b2players[i]->GetLinearVelocity().y });
     }
 
     for (int i = 0; i < EGG_COUNT; i++) {
@@ -168,10 +193,9 @@ bool thuai::World::Update(float timestep, int32 velocityIterations,
           {b2eggs[i]->GetLinearVelocity().x, b2eggs[i]->GetLinearVelocity().y});
     }
   } catch (std::exception &e) {
+    return false;
   }
-  return true;
-
-  return false;
+  return true; 
 }
 
 nlohmann::json World::output_to_ai() const {

@@ -37,7 +37,7 @@ int main(void) {
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
     if(!world->Update(TIMESTEP,velocityIterations,positionIterations))
-        ; // err occurs
+        std::cerr<<"Something Went Wrong!"<<std::endl; // err occurs
 
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
     if (cur_frame % FRAMES_PER_STATE == 0) {
