@@ -93,6 +93,10 @@ int main(void) {
               //--------- handle egg placement ---------
               if (! player_action["drop"].is_null()) {
                 const double radian = player_action["drop"];
+
+              }
+              if (! player_action["grab"].is_null()) {
+                const double radian = player_action["drop"];
                 
               }
             }
