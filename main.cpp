@@ -36,29 +36,8 @@ int main(void) {
   write_to_judger(init_config, -1);
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
-    world->b2world->Step(
-      TIMESTEP, velocityIterations, positionIterations); // do the simulation
-    if(!world->Update())
+    if(!world->Update(TIMESTEP,velocityIterations,positionIterations))
         ; // err occurs
-
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-      world->players[i]->set_position(
-        { world->b2players[i]->GetPosition().x,
-          world->b2players[i]->GetPosition().y });
-      world->players[i]->set_velocity(
-        { world->b2players[i]->GetLinearVelocity().x,
-          world->b2players[i]->GetLinearVelocity().y }
-      );
-    }
-
-    for (int i = 0; i < EGG_COUNT; i++) {
-      world->eggs[i]->set_position({ world->b2eggs[i]->GetPosition().x,
-                                      world->b2eggs[i]->GetPosition().y });
-      world->eggs[i]->set_velocity(
-        { world->b2eggs[i]->GetLinearVelocity().x,
-          world->b2eggs[i]->GetLinearVelocity().y }
-      );
-    }
 
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
     if (cur_frame % FRAMES_PER_STATE == 0) {
