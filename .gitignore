@@ -34,3 +34,4 @@
 build/**
 CMakeFiles
 .vscode
+CMakeCache.txt

@@ -3,14 +3,15 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
   CACHE STRING "Vcpkg toolchain file")
 
-# strange bug on windows
-if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-  set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x86-windows/share/unofficial-box2d)
-endif(CMAKE_SYSTEM_NAME MATCHES "Windows")
-
 # set the project name
 project(egg2021)
 
+message("Now building on:${CMAKE_SYSTEM_NAME}")
+
+# strange bug on windows
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+  set(unofficial-box2d_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x86-windows/share/unofficial-box2d")
+endif(CMAKE_SYSTEM_NAME MATCHES "Windows")
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
