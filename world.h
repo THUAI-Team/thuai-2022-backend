@@ -22,7 +22,7 @@ struct World {
   b2World *b2world{nullptr};
   bool Update(int FPS, int32 velocityIterations,
               int32 positionIterations);
-  json output_to_ai() const;
+  json output_to_ai(int) const;
   void read_from_team_action(Team team, json detail);
   World();
   ~World();

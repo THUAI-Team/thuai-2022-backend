@@ -202,9 +202,10 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
   return true; 
 }
 
-nlohmann::json World::output_to_ai() const {
+nlohmann::json World::output_to_ai(int state) const {
   using json = nlohmann::json;
   json ret;
+  ret["state"] = state;
   ret["eggs"] = json::array();
   ret["teams"] = {json::array(), json::array(), json::array()};
   for (int i = 0; i < EGG_COUNT; i++) {

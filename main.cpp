@@ -45,7 +45,7 @@ main(void)
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
-      auto msg = world->output_to_ai();
+      auto msg = world->output_to_ai(state);
       write_to_judger(
         json({ { "state", state },
                { "listen", { 0, 1, 2 } },
