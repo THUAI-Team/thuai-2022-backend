@@ -33,6 +33,7 @@
 
 build/**
 CMakeFiles
+.DS_Store
 .vscode
 .vs
 out

@@ -5,8 +5,10 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "nlohmann/json.hpp"
+
 
 namespace thuai {
 double get_walk_speed_with_egg(double egg_score) {
@@ -48,7 +50,7 @@ World::World() {
     // Initialize b2World
     b2world = new b2World(b2Vec2(0, 0));
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0.0f, 0.0f);
+    groundBodyDef.position.Set(.0f, .0f);
     b2Body *groundBody = b2world->CreateBody(&groundBodyDef);
 
     b2CircleShape groundCircle;
@@ -58,7 +60,7 @@ World::World() {
         item.SetAsBox(GOAL_LENGTH, GOAL_WIDTH);
     // TODO: finish the goal region
 
-    groundBody->CreateFixture(&groundCircle, 0.0f);
+    groundBody->CreateFixture(&groundCircle, .0f);
   }
   {
     // Initialize Players & eggs
@@ -148,10 +150,12 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
     for (int i = 0; i < PLAYER_COUNT; i++) {
       auto currentPlayer = players[i];
       auto b2currentPlayer = b2players[i];
+      bool isSpeedDown = false;
+      // TODO: reduce player's velocity if distance satisfies
       if (currentPlayer->status() == PlayerStatus::RUNNING)
-        if (currentPlayer->endurance() > 4.0 / float(FPS)) {
+        if (currentPlayer->endurance() > 4.0f / float(FPS)) {
           currentPlayer->set_endurance(currentPlayer->endurance() -
-                                       4.0 / float(FPS));
+                                       4.0f / float(FPS));
           b2currentPlayer->SetLinearVelocity(
             { float(currentPlayer->facing().x * RUN_SPEED),
               float(currentPlayer->facing().y * RUN_SPEED) });
@@ -159,7 +163,7 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
         } else
           currentPlayer->set_status(PlayerStatus::WALKING);
       if (currentPlayer->status() == PlayerStatus::WALKING) {
-        float newendurance = currentPlayer->endurance() + 0.5 / float(FPS);
+        float newendurance = currentPlayer->endurance() + 0.5f / float(FPS);
         currentPlayer->set_endurance(newendurance > 5 ? 5 : newendurance);
         int egg_holding = currentPlayer->egg();
         double walk_speed = WALK_SPEED_EMPTY;
@@ -176,8 +180,12 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
         b2currentPlayer->SetLinearVelocity({ .0, .0 });
       }
 
-    }
+    } // Player update ends
 
+    
+    for (int i = 0; i < EGG_COUNT; i++) {
+      continue; // TODO: eggs update here
+    } // Egg update ends
 
     b2world->Step(timestep,
                   velocityIterations,
@@ -197,6 +205,7 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
           {b2eggs[i]->GetLinearVelocity().x, b2eggs[i]->GetLinearVelocity().y});
     }
   } catch (std::exception &e) {
+    std::cerr << e.what() << std::endl;
     return false;
   }
   return true; 

@@ -15,9 +15,8 @@ using namespace thuai;
 
 constexpr const int FPS = 60, FRAME_COUNT = FPS * 60 * 2, FRAMES_PER_STATE = 6;
 const int32 velocityIterations = 10, positionIterations = 8;
-int
-main(void)
-{
+int main(void){
+
   json init_msg, config;
   read_from_judger(init_msg);
   if (init_msg["player_num"] != 3) {
