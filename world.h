@@ -8,8 +8,10 @@
 
 namespace thuai {
 using json = nlohmann::json;
-const inline double DIAMETER = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0,
+const double DIAMETER = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0,
                     RUN_SPEED = 4.0, WALK_SPEED_EMPTY = 2.0;
+const double PLAYER_RADIUS = .24f, EGG_RADIUS = .35f;
+const double MIN_GRAB_DIS = .1f + PLAYER_RADIUS;
 
 double get_walk_speed_with_egg(double);
 struct World {
@@ -20,6 +22,7 @@ struct World {
   b2Body *b2players[PLAYER_COUNT];
   b2Body *b2eggs[EGG_COUNT];
   b2World *b2world{nullptr};
+  void addEgg(int index);
   bool Update(int FPS, int32 velocityIterations,
               int32 positionIterations);
   json output_to_ai(int) const;
