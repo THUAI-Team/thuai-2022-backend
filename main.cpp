@@ -91,7 +91,8 @@ int main(void){
       // TODO: call world method to handle
     }
     {
-      int r_score = 111, y_score = 222, b_score = 333; // calculate score
+      int r_score = world->score[0], y_score = world->score[1],
+          b_score = world->score[2]; // calculate score
       record.set_score(r_score, y_score, b_score);
       json end_info = { { "0", r_score }, { "1", y_score }, { "2", b_score } };
       write_to_judger(

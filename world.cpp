@@ -49,7 +49,6 @@ get_distance(const Vec2D& pos1, const b2Body* const obj2)
 
 World::World()
 {
-  const double pi = acos(-1);
   {
     const double angle_delta = 2 * pi / 15, player_radius = DIAMETER / 4;
     double angle = .0;
@@ -81,30 +80,37 @@ World::World()
   // ========== Box2d Related ==========
   {
     // Initialize b2World
-    b2world = new b2World(b2Vec2(0, 0));
+    b2world = new b2World(b2Vec2(0, 0)); // Set gravity to 0.0
     b2BodyDef groundBodyDef;
+    b2Vec2 ve[18];
+    for (int i = 0; i < 18; i++) {
+      if ((i % 6) < 3)
+        ve[i].Set(static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) * cos(i / 18 * 2 * pi)),
+                  static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) *
+                                     sin(i / 18 * 2 * pi)));
+      else
+        ve[i].Set(static_cast<float>((DIAMETER / 2) * cos(i / 18 * 2 * pi)),
+                  static_cast<float>((DIAMETER / 2) * sin(i / 18 * 2 * pi)));
+    }
     groundBodyDef.position.Set(.0f, .0f);
     b2Body* groundBody = b2world->CreateBody(&groundBodyDef);
 
-    b2CircleShape groundCircle;
-    groundCircle.m_radius = (DIAMETER / 2);
-    b2PolygonShape goalBox[3];
-    for (auto& item : goalBox)
-      item.SetAsBox(GOAL_LENGTH, GOAL_WIDTH);
-    // TODO: finish the goal region
+    b2ChainShape groundChain;
+    groundChain.CreateLoop(ve, 18);
+    // finish the goal region
 
-    groundBody->CreateFixture(&groundCircle, .0f);
+    groundBody->CreateFixture(&groundChain, .0f);
   }
   {
     // Initialize Players & eggs
     for (int i = 0; i < PLAYER_COUNT; i++) {
       b2BodyDef bodyDef;
       bodyDef.type = b2_dynamicBody;
-      bodyDef.position.Set(float(players[i]->position().x),
-                           float(players[i]->position().y));
+      bodyDef.position.Set(static_cast<float>(players[i]->position().x),
+                           static_cast<float>(players[i]->position().y));
       b2players[i] = b2world->CreateBody(&bodyDef);
       b2CircleShape dynamicBox;
-      dynamicBox.m_radius = PLAYER_RADIUS;
+      dynamicBox.m_radius = static_cast<float>(PLAYER_RADIUS);
       b2FixtureDef fixtureDef;
       fixtureDef.shape = &dynamicBox;
       fixtureDef.friction = 0;
@@ -163,9 +169,9 @@ World::read_from_team_action(Team team, nlohmann::json detail)
       // resolve if two eggs to be placed at conflicted posistion
       double mindis = EGG_RADIUS + std::min(EGG_RADIUS, PLAYER_RADIUS);
       Vec2D pos_to_be_placed = { b2players[player_id]->GetPosition().x +
-                                   sin(radian) * (PLAYER_RADIUS + EGG_RADIUS),
+                                   cos(radian) * (PLAYER_RADIUS + EGG_RADIUS),
                                  b2players[player_id]->GetPosition().y +
-                                   cos(radian) * (PLAYER_RADIUS + EGG_RADIUS) };
+                                   sin(radian) * (PLAYER_RADIUS + EGG_RADIUS) };
       bool can_be_placed = true;
       for (auto egg : b2eggs) {
         if (egg == nullptr)
@@ -191,15 +197,15 @@ World::read_from_team_action(Team team, nlohmann::json detail)
       const double egg_target = player_action["grab"];
       //  make sure only the nearest player grab the egg
       Vec2D pos_to_be_grabbed = {
-        b2players[player_id]->GetPosition().x + sin(egg_target) * MIN_GRAB_DIS,
-        b2players[player_id]->GetPosition().y + cos(egg_target) * MIN_GRAB_DIS
+        b2players[player_id]->GetPosition().x + cos(egg_target) * MIN_GRAB_DIS,
+        b2players[player_id]->GetPosition().y + sin(egg_target) * MIN_GRAB_DIS
       };
 
       for (int i = 0; i < EGG_COUNT; i++) {
         if (b2eggs[i] == nullptr)
           continue;
-        if (auto dis =
-              get_distance(b2eggs[i], pos_to_be_grabbed) <= EGG_RADIUS) {
+        auto dis = get_distance(b2eggs[i], pos_to_be_grabbed);
+        if (dis <= EGG_RADIUS) {
           if (grablist.find(i) != grablist.end())
             if (grablist[i].second < dis)
               continue;
@@ -223,11 +229,11 @@ thuai::World::addEgg(int index)
 {
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(float(eggs[index]->position().x),
-                       float(eggs[index]->position().y));
+  bodyDef.position.Set(static_cast<float>(eggs[index]->position().x),
+                       static_cast<float>(eggs[index]->position().y));
   b2eggs[index] = b2world->CreateBody(&bodyDef);
   b2CircleShape dynamicBox;
-  dynamicBox.m_radius = EGG_RADIUS;
+  dynamicBox.m_radius = static_cast<float> (EGG_RADIUS);
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &dynamicBox;
   fixtureDef.friction = 0;
@@ -243,7 +249,7 @@ thuai::World::Update(int FPS,
                      int32 positionIterations)
 {
   try {
-    static const float timestep = 1.0f / float(FPS);
+    static const float timestep = 1.0f / static_cast<float>(FPS);
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
       auto currentPlayer = players[i];
@@ -256,9 +262,9 @@ thuai::World::Update(int FPS,
           player_distance_to_origin >= INNER_SPEED_REDUCE_RADIUS)
         isSpeedDown = true;
       if (currentPlayer->status() == PlayerStatus::RUNNING)
-        if (currentPlayer->endurance() > 4.0f / float(FPS)) {
+        if (currentPlayer->endurance() > 4.0f / static_cast<float>(FPS)) {
           currentPlayer->set_endurance(currentPlayer->endurance() -
-                                       4.0f / float(FPS));
+                                       4.0f / static_cast<float>(FPS));
           b2currentPlayer->SetLinearVelocity(
             { float(currentPlayer->facing().x * RUN_SPEED),
               float(currentPlayer->facing().y * RUN_SPEED) });
@@ -266,7 +272,8 @@ thuai::World::Update(int FPS,
         } else
           currentPlayer->set_status(PlayerStatus::WALKING);
       if (currentPlayer->status() == PlayerStatus::WALKING) {
-        float newendurance = currentPlayer->endurance() + 0.5f / float(FPS);
+        float newendurance =
+          currentPlayer->endurance() + 0.5f / static_cast<float>(FPS);
         currentPlayer->set_endurance(newendurance > 5 ? 5 : newendurance);
         int egg_holding = currentPlayer->egg();
         double walk_speed = WALK_SPEED_EMPTY;
@@ -278,17 +285,19 @@ thuai::World::Update(int FPS,
             float(currentPlayer->facing().y * walk_speed) });
       }
       if (currentPlayer->status() == PlayerStatus::STOPPED) {
-        float newendurance = currentPlayer->endurance() + 1 / float(FPS);
+        float newendurance =
+          currentPlayer->endurance() + 1 / static_cast<float>(FPS);
         currentPlayer->set_endurance(newendurance > 5 ? 5 : newendurance);
         b2currentPlayer->SetLinearVelocity({ .0, .0 });
       }
       // reduce player's velocity if distance satisfies part II
       if (isSpeedDown) {
-        b2currentPlayer->SetLinearVelocity(
-          { std::min(currentPlayer->facing().x * SPEED_ON_SPEED_REDUCE,
-                     double(b2currentPlayer->GetLinearVelocity().x)),
-            std::min(currentPlayer->facing().y * SPEED_ON_SPEED_REDUCE,
-                     double(b2currentPlayer->GetLinearVelocity().y)) });
+        b2currentPlayer->SetLinearVelocity({
+            static_cast<float>(std::min(currentPlayer->facing().x * SPEED_ON_SPEED_REDUCE,
+                     static_cast<double>(b2currentPlayer->GetLinearVelocity().x))),
+            static_cast<float>(std::min(currentPlayer->facing().y * SPEED_ON_SPEED_REDUCE,
+                     static_cast<double>(
+                       b2currentPlayer->GetLinearVelocity().y)))});
       }
     } // Player update ends
 
@@ -308,12 +317,25 @@ thuai::World::Update(int FPS,
     }
 
     for (int i = 0; i < EGG_COUNT; i++) {
+      for (int k = 0; k < 3; k++)
+        score[k] = 0;
       if (b2eggs[i] == nullptr)
         continue;
       eggs[i]->set_position(
         { b2eggs[i]->GetPosition().x, b2eggs[i]->GetPosition().y });
       eggs[i]->set_velocity(
         { b2eggs[i]->GetLinearVelocity().x, b2eggs[i]->GetLinearVelocity().y });
+      if (get_distance(b2eggs[i], { 0, 0 }) > DIAMETER / 2) {
+        double eggangle = atan2(static_cast<float>(b2eggs[i]->GetPosition().y),
+                               static_cast<float>(b2eggs[i]->GetPosition().x));
+        for (int k = 0; k < 3; k++) {
+          if (eggangle < 2 * k * pi / 3) {
+            score[k] += eggs[i]->score();
+            break;
+          }
+        }
+
+      }
     }
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
