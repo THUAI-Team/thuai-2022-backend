@@ -82,15 +82,21 @@ World::World()
     // Initialize b2World
     b2world = new b2World(b2Vec2(0, 0)); // Set gravity to 0.0
     b2BodyDef groundBodyDef;
-    b2Vec2 ve[18];
-    for (int i = 0; i < 18; i++) {
-      if ((i % 6) < 3)
-        ve[i].Set(static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) * cos(i / 18 * 2 * pi)),
+    b2Vec2 ve[GROUND_POLYGON_VERTEX_COUNT];
+    for (int i = 0; i < GROUND_POLYGON_VERTEX_COUNT; i++) {
+      if ((i % (GROUND_POLYGON_VERTEX_COUNT / 3)) <
+          (GROUND_POLYGON_VERTEX_COUNT / 6))
+        ve[i].Set(
+          static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) *
+                             cos(i / GROUND_POLYGON_VERTEX_COUNT * 2 * pi)),
                   static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) *
-                                     sin(i / 18 * 2 * pi)));
+                             sin(i / GROUND_POLYGON_VERTEX_COUNT * 2 * pi)));
       else
-        ve[i].Set(static_cast<float>((DIAMETER / 2) * cos(i / 18 * 2 * pi)),
-                  static_cast<float>((DIAMETER / 2) * sin(i / 18 * 2 * pi)));
+        ve[i].Set(
+          static_cast<float>((DIAMETER / 2) *
+                             cos(i / GROUND_POLYGON_VERTEX_COUNT * 2 * pi)),
+          static_cast<float>((DIAMETER / 2) *
+                             sin(i / GROUND_POLYGON_VERTEX_COUNT * 2 * pi)));
     }
     groundBodyDef.position.Set(.0f, .0f);
     b2Body* groundBody = b2world->CreateBody(&groundBodyDef);
