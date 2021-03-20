@@ -114,6 +114,7 @@ World::World()
     }
 
     for (int i = 0; i < EGG_COUNT; i++) {
+      addEgg(i);
     }
   }
 }
