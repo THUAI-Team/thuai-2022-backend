@@ -1,13 +1,14 @@
 #include "world.h"
 #include "entities_json.h"
-#include <algorithm>
-#include <cmath>
-#include <exception>
-#include <iostream>
+
 #include <map>
+#include <cmath>
 #include <random>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <algorithm>
+#include <exception>
 
 #include "nlohmann/json.hpp"
 
@@ -248,7 +249,12 @@ thuai::World::Update(int FPS,
       auto currentPlayer = players[i];
       auto b2currentPlayer = b2players[i];
       bool isSpeedDown = false;
-      // TODO: reduce player's velocity if distance satisfies
+      // reduce player's velocity if distance satisfies part I
+      double player_distance_to_origin =
+        get_distance(b2currentPlayer, { 0, 0 });
+      if (player_distance_to_origin <= OUTER_SPEED_REDUCE_RADIUS &&
+          player_distance_to_origin >= INNER_SPEED_REDUCE_RADIUS)
+        isSpeedDown = true;
       if (currentPlayer->status() == PlayerStatus::RUNNING)
         if (currentPlayer->endurance() > 4.0f / float(FPS)) {
           currentPlayer->set_endurance(currentPlayer->endurance() -
@@ -276,12 +282,19 @@ thuai::World::Update(int FPS,
         currentPlayer->set_endurance(newendurance > 5 ? 5 : newendurance);
         b2currentPlayer->SetLinearVelocity({ .0, .0 });
       }
-
+      // reduce player's velocity if distance satisfies part II
+      if (isSpeedDown) {
+        b2currentPlayer->SetLinearVelocity(
+          { std::min(currentPlayer->facing().x * SPEED_ON_SPEED_REDUCE,
+                     double(b2currentPlayer->GetLinearVelocity().x)),
+            std::min(currentPlayer->facing().y * SPEED_ON_SPEED_REDUCE,
+                     double(b2currentPlayer->GetLinearVelocity().y)) });
+      }
     } // Player update ends
 
     for (int i = 0; i < EGG_COUNT; i++) {
-      continue; // TODO: eggs update here
-    }           // Egg update ends
+      continue; 
+    } // Egg update ends
 
     b2world->Step(timestep,
                   velocityIterations,
