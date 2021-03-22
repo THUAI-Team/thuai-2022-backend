@@ -360,7 +360,7 @@ World::output_to_ai(int state) const
   ret["teams"] = { json::array(), json::array(), json::array() };
   for (int i = 0; i < EGG_COUNT; i++) {
     ret["eggs"][i] = {
-      { "position", eggs[i]->position() }, { "holder", -1 } // set this later
+      { "position", eggs[i]->position() }, { "holder", -1 }, { "score", eggs[i]->score() } // set this later
     };
   }
   for (int i = 0; i < PLAYER_COUNT; i++) {
