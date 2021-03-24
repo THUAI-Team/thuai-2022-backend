@@ -1,5 +1,6 @@
 #include <string>
 #include <algorithm>
+#include <iomanip>
 #include <cstring>
 #include <cstdint>
 #include "stream_helper.h"
@@ -29,7 +30,7 @@ namespace thuai {
     int32_t len = s.length();
     char buf[4];
 
-    i32_to_bytes(len, true, buf); // 4: len
+    i32_to_bytes(len, true, buf); // 4: len    
     std::cout.write(buf, 4);
 
     i32_to_bytes(target, true, buf); // 4: target

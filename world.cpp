@@ -104,7 +104,6 @@ World::World() {
         b2Vec2 ve[GROUND_POLYGON_VERTEX_COUNT];
         for (int i = 0; i < GROUND_POLYGON_VERTEX_COUNT; i++) {
             float vertex_cnt_f = GROUND_POLYGON_VERTEX_COUNT;
-            static_cast<float>(GROUND_POLYGON_VERTEX_COUNT);
             if ((i % (GROUND_POLYGON_VERTEX_COUNT / 3)) <
                 (GROUND_POLYGON_VERTEX_COUNT / 6))
                 ve[i].Set(static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) *
@@ -143,6 +142,8 @@ World::World() {
             b2players[i]->CreateFixture(&fixtureDef);
             b2MassData massdata;
             massdata.mass = 50;
+            massdata.center = b2Vec2(0, 0);
+            massdata.I = 1.44;
             b2players[i]->SetMassData(&massdata);
         }
 
@@ -283,6 +284,8 @@ void thuai::World::addEgg(int index) {
     b2eggs[index]->CreateFixture(&fixtureDef);
     b2MassData massdata;
     massdata.mass = 30;
+    massdata.center = b2Vec2(0, 0);
+    massdata.I = 1.8375;
     b2eggs[index]->SetMassData(&massdata);
 }
 
@@ -417,7 +420,9 @@ nlohmann::json World::output_to_ai(int state) const {
         int team = players[i]->team(), sub_id = i % 4;
         auto facing = players[i]->velocity().normalized();
         int holding = players[i]->egg();
-        ret["eggs"][holding]["holder"] = i;
+        if (holding != -1) {
+            ret["eggs"][holding]["holder"] = i;
+        }
         ret["teams"][team][sub_id] = {{"position", players[i]->position()},
                                       {"status", players[i]->status()},
                                       {"facing", facing}};
