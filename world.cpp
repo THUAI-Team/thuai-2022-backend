@@ -13,7 +13,7 @@
 #include "nlohmann/json.hpp"
 
 namespace thuai {
-std::vector<std::pair<Player*, int>> slip_players_list;
+std::map<Player*,int> slip_players_list;
 
 typedef struct b2bodydata {
     Player* m_p_player{nullptr};
@@ -40,7 +40,7 @@ void World::ContactListener::EndContact(b2Contact* contact) {
     if (body_data != nullptr && body_data->m_p_player != nullptr) {
       body_data->m_p_b2body->SetLinearVelocity({ .0, .0 });
       body_data->m_p_player->set_status(PlayerStatus::SLIPPED);
-      slip_players_list.push_back(std::make_pair(body_data->m_p_player, SLIP_FRAMES));
+      slip_players_list[body_data->m_p_player]= SLIP_FRAMES;
     }
   }
 }
@@ -149,6 +149,7 @@ World::World() {
             massdata.center = b2Vec2(0, 0);
             massdata.I = 1.44;
             b2players[i]->SetMassData(&massdata);
+            slip_players_list[players[i]]= -1;
         }
 
         for (int i = 0; i < EGG_COUNT; i++) {
@@ -365,12 +366,15 @@ bool thuai::World::Update(int FPS,
         }  // Egg update ends
 
         // Process slipping players
-        for (auto i = slip_players_list.begin(); i != slip_players_list.end(); i++)
-            if (--(i->second) <= 0) {
-                i->first->set_status(PlayerStatus::STOPPED);
-                i = slip_players_list.erase(i);
-                continue;
-            }
+        for (auto i = slip_players_list.begin(); i != slip_players_list.end();
+             i++) {
+          if (i->second == -1)
+            continue;
+          if (--(i->second) <= 0) {
+            i->second = -1;
+            i->first->set_status(PlayerStatus::STOPPED);
+          }
+        }
 
         b2world->Step(timestep, velocityIterations,
                       positionIterations);  // do the simulation
