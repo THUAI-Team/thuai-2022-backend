@@ -1,19 +1,19 @@
 #include "world.h"
 #include "entities_json.h"
 
-#include <algorithm>
-#include <cmath>
-#include <exception>
-#include <iostream>
 #include <map>
+#include <cmath>
 #include <random>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <algorithm>
+#include <exception>
 
 #include "nlohmann/json.hpp"
 
 namespace thuai {
-std::vector<std::pair<Player*, int>> slipplayers;
+std::vector<std::pair<Player*, int>> slip_players_list;
 
 typedef struct b2bodydata {
     Player* m_p_player{nullptr};
@@ -25,20 +25,24 @@ typedef struct b2bodydata {
         : m_p_egg(_egg), m_p_b2body(_b2body) {}
 } b2bodydata;
 void World::ContactListener::BeginContact(b2Contact* contact) {
+    // Before collision, modified if needed
     return;
 }
 
 void World::ContactListener::EndContact(b2Contact* contact) {
-    b2Body* bodyA = contact->GetFixtureA()->GetBody();
-    b2Body* bodyB = contact->GetFixtureB()->GetBody();
-    auto bodyA_data = static_cast<b2bodydata*>(bodyA->GetUserData());
-    auto bodyB_data = static_cast<b2bodydata*>(bodyB->GetUserData());
-    if (bodyA_data != nullptr) {
-        bodyA_data->m_p_b2body->SetLinearVelocity({.0, .0});
-        bodyA_data->m_p_player->set_status(PlayerStatus::SLIPPED);
-        slipplayers.push_back(
-            std::make_pair(bodyA_data->m_p_player, SLIP_FRAMES));
+    // After collision
+  std::vector<b2Body*> collision_items;
+  collision_items.push_back(contact->GetFixtureA()->GetBody());
+  collision_items.push_back(contact->GetFixtureB()->GetBody());
+
+  for (auto item : collision_items) {
+    auto body_data = static_cast<b2bodydata*>(item->GetUserData());
+    if (body_data != nullptr && body_data->m_p_player != nullptr) {
+      body_data->m_p_b2body->SetLinearVelocity({ .0, .0 });
+      body_data->m_p_player->set_status(PlayerStatus::SLIPPED);
+      slip_players_list.push_back(std::make_pair(body_data->m_p_player, SLIP_FRAMES));
     }
+  }
 }
 
 double get_walk_speed_with_egg(double egg_score) {
@@ -358,10 +362,10 @@ bool thuai::World::Update(int FPS,
         }  // Egg update ends
 
         // Process slipping players
-        for (auto i = slipplayers.begin(); i != slipplayers.end(); i++)
+        for (auto i = slip_players_list.begin(); i != slip_players_list.end(); i++)
             if (--(i->second) <= 0) {
                 i->first->set_status(PlayerStatus::STOPPED);
-                slipplayers.erase(i);
+                slip_players_list.erase(i);
                 continue;
             }
 
