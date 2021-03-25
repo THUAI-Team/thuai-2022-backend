@@ -193,6 +193,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
         Vec2D facing;
         player_action["facing"].get_to(facing);
         facing = facing.normalized();
+        current_player->set_facing(facing);
         auto new_status = player_action["action"].get<PlayerStatus>();
         if (new_status != SLIPPED) {
             current_player->set_status(new_status);
