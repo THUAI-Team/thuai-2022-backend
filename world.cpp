@@ -324,6 +324,7 @@ bool thuai::World::Update(int FPS,
                 }
             }
             if (currentPlayer->status() == PlayerStatus::WALKING) {
+                std::cerr << "WALKING PLAYER FOUND\n";
                 float newendurance =
                     currentPlayer->endurance() + 0.5f / static_cast<float>(FPS);
                 currentPlayer->set_endurance(newendurance > 5 ? 5
@@ -373,7 +374,7 @@ bool thuai::World::Update(int FPS,
 
         b2world->Step(timestep, velocityIterations,
                       positionIterations);  // do the simulation
-
+        
         for (int i = 0; i < PLAYER_COUNT; i++) {
             players[i]->set_position(
                 {b2players[i]->GetPosition().x, b2players[i]->GetPosition().y});
