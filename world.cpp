@@ -309,7 +309,7 @@ bool thuai::World::Update(int FPS,
             if (player_distance_to_origin <= OUTER_SPEED_REDUCE_RADIUS &&
                 player_distance_to_origin >= INNER_SPEED_REDUCE_RADIUS)
                 isSpeedDown = true;
-            if (currentPlayer->status() == PlayerStatus::RUNNING)
+            if (currentPlayer->status() == PlayerStatus::RUNNING) {
                 if (currentPlayer->endurance() >
                     4.0f / static_cast<float>(FPS)) {
                     currentPlayer->set_endurance(currentPlayer->endurance() -
@@ -319,8 +319,10 @@ bool thuai::World::Update(int FPS,
                         {float(currentPlayer->facing().x * RUN_SPEED),
                          float(currentPlayer->facing().y * RUN_SPEED)});
 
-                } else
+                } else {
                     currentPlayer->set_status(PlayerStatus::WALKING);
+                }
+            }
             if (currentPlayer->status() == PlayerStatus::WALKING) {
                 float newendurance =
                     currentPlayer->endurance() + 0.5f / static_cast<float>(FPS);

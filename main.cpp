@@ -13,7 +13,7 @@
 using json = nlohmann::json;
 using namespace thuai;
 
-constexpr const int FPS = 60, FRAME_COUNT = FPS * 60 * 2, FRAMES_PER_STATE = 6;
+constexpr const int FPS = 60, FRAME_COUNT = FPS * 1, FRAMES_PER_STATE = 6; // FIXME: 120 seconds!
 const int32 velocityIterations = 10, positionIterations = 8;
 int main(void) {
 
@@ -39,6 +39,7 @@ int main(void) {
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
     std::cerr << "Current frame = " << cur_frame << std::endl;
+    record.add_frame();
     if (!world->Update(FPS, velocityIterations, positionIterations)) {
       std::cerr << "Something Went Wrong!" << std::endl; // err occurs
     }
@@ -109,9 +110,12 @@ int main(void) {
       for (int i = 0; i < 3; i++)
         std::cerr << is_offline[i] << ' ';
       std::cerr << std::endl;
-
-      // do the handling together
-      // TODO: call world method to handle
+    }
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+      record.set_player_in_frame(*(world->players[i]));
+    }
+    for (int i = 0; i < EGG_COUNT; i++) {
+      record.set_egg_in_frame(*(world->eggs[i]));
     }
   }
   
@@ -123,6 +127,8 @@ int main(void) {
 
   std::ofstream of(std::string(init_msg["replay"]), std::ios::binary);
   record.serialize(of);
+  of.flush();
+  of.close();
 
   return 0;
 }
