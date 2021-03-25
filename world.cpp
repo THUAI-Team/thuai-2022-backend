@@ -368,7 +368,7 @@ bool thuai::World::Update(int FPS,
         for (auto i = slip_players_list.begin(); i != slip_players_list.end(); i++)
             if (--(i->second) <= 0) {
                 i->first->set_status(PlayerStatus::STOPPED);
-                slip_players_list.erase(i);
+                i = slip_players_list.erase(i);
                 continue;
             }
 
