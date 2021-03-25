@@ -13,7 +13,7 @@
 using json = nlohmann::json;
 using namespace thuai;
 
-constexpr const int FPS = 60, FRAME_COUNT = FPS * 20, FRAMES_PER_STATE = 6; // FIXME: 120 seconds!
+constexpr const int FPS = 60, FRAME_COUNT = FPS * 120, FRAMES_PER_STATE = 6; // FIXME: 120 seconds!
 const int32 velocityIterations = 10, positionIterations = 8;
 int main(void) {
 
