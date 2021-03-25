@@ -358,6 +358,7 @@ bool thuai::World::Update(int FPS,
                          static_cast<double>(
                              b2currentPlayer->GetLinearVelocity().y)))});
             }
+
         }  // Player update ends
 
         for (int i = 0; i < EGG_COUNT; i++) {
@@ -380,6 +381,7 @@ bool thuai::World::Update(int FPS,
                 {b2players[i]->GetPosition().x, b2players[i]->GetPosition().y});
             players[i]->set_velocity({b2players[i]->GetLinearVelocity().x,
                                       b2players[i]->GetLinearVelocity().y});
+            players[i]->set_facing(players[i]->velocity().normalized());
         }
 
         for (int i = 0; i < EGG_COUNT; i++) {
