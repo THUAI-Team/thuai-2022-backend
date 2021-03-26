@@ -173,7 +173,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
     std::map<int, std::pair<int, double>>
         grabfromplayerlist;  // {**PLAYERINDEX**:
                              // (currentNearestPlayer,currentNearestDistance)}
-                             // only eggs on other players eggs on the ground
+                             // only eggs on other players
     for (int i = 0; i < 4; i++) {
         auto player_action = detail["actions"][i];
         int player_id = i + int(team) * 4;
