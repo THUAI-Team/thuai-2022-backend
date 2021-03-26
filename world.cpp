@@ -216,8 +216,12 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
         }
       }
       for (auto player : b2players) {
-        if (get_distance(player, pos_to_be_placed) <=
-            EGG_RADIUS + PLAYER_RADIUS) {
+        if (fabs(player->GetPosition().x - this->players[player_id]->position().x) < 1e-5
+         && fabs(player->GetPosition().y - this->players[player_id]->position().y) < 1e-5) {
+            continue;
+        }
+        
+        if (get_distance(player, pos_to_be_placed) <= EGG_RADIUS + PLAYER_RADIUS) {
           can_be_placed = false;
           break;
         }
@@ -228,7 +232,6 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
       }
     }
     if (!player_action["grab"].is_null()) {
-      std::cerr << "GOT GRAB\n";
       const int egg_target = static_cast<int>(player_action["grab"]);
 
       if (egg_target > 0 && egg_target < EGG_COUNT &&
@@ -239,7 +242,6 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
 
         // if egg_target is not in the ground and therefore on some player
         if (b2eggs[egg_target] == nullptr) {
-          std::cerr << "EGG ON PLAYER\n";
           for (int i = 0; i < PLAYER_COUNT; i++) {
             if (players[i]->egg() == egg_target) {
               auto dis = get_distance(b2eggs[egg_target], b2players[i]);
@@ -253,7 +255,6 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
             }
           }
         } else {
-          std::cerr << "EGG ON GROUND\n";
           // the egg is on the ground
           auto dis = get_distance(b2eggs[egg_target], pos_of_player);
           if (dis <= EGG_RADIUS + MIN_GRAB_DIS) {
@@ -383,6 +384,11 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
       players[i]->set_velocity({b2players[i]->GetLinearVelocity().x,
                                 b2players[i]->GetLinearVelocity().y});
       players[i]->set_facing(players[i]->velocity().normalized());
+      int holding = players[i]->egg();
+      if (holding != -1) {
+        eggs[holding]->set_position(players[i]->position());
+        eggs[holding]->set_velocity(players[i]->velocity());
+      }
     }
 
     for (int i = 0; i < EGG_COUNT; i++) {
