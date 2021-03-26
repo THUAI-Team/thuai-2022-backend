@@ -4,6 +4,7 @@
   "files.associations": {
     "random": "cpp",
     "filesystem": "cpp",
-    "istream": "cpp"
+    "istream": "cpp",
+    "vector": "cpp"
   }
 }

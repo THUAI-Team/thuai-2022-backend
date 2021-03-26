@@ -326,7 +326,6 @@ bool thuai::World::Update(int FPS,
                 }
             }
             if (currentPlayer->status() == PlayerStatus::WALKING) {
-                std::cerr << "WALKING PLAYER FOUND\n";
                 float newendurance =
                     currentPlayer->endurance() + 0.5f / static_cast<float>(FPS);
                 currentPlayer->set_endurance(newendurance > 5 ? 5
