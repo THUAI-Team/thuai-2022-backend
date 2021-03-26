@@ -239,29 +239,30 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
                 Vec2D pos_of_player = {b2players[player_id]->GetPosition().x,
                                        b2players[player_id]->GetPosition().y};
 
-                if (b2eggs[egg_target] == nullptr)
-                    for (int i = 0; i < PLAYER_COUNT; i++)
-                        if (players[i]->egg() == egg_target) {
-                            auto dis =
-                                get_distance(b2eggs[egg_target], b2players[i]);
-                            if (dis <= EGG_RADIUS + MIN_GRAB_DIS)
-                                if (grablist.find(i) != grablist.end())
-                                    if (grablist[i].second > dis)
-                                        grablist[i] =
-                                            std::make_pair(player_id, dis);
-                            break;
-                        }
-
-                auto dis = get_distance(b2eggs[egg_target], pos_of_player);
-                if (dis <= EGG_RADIUS + MIN_GRAB_DIS) {
+                // if egg_target is not in the ground and therefore on some player
+                if (b2eggs[egg_target] == nullptr) {
+                  for (int i = 0; i < PLAYER_COUNT; i++)
+                    if (players[i]->egg() == egg_target) {
+                      auto dis = get_distance(b2eggs[egg_target], b2players[i]);
+                      if (dis <= EGG_RADIUS + MIN_GRAB_DIS)
+                        if (grablist.find(i) != grablist.end())
+                          if (grablist[i].second > dis)
+                            grablist[i] = std::make_pair(player_id, dis);
+                      break;
+                    }
+                } else {
+                    // the egg is on the ground
+                  auto dis = get_distance(b2eggs[egg_target], pos_of_player);
+                  if (dis <= EGG_RADIUS + MIN_GRAB_DIS) {
                     if (grablist.find(egg_target) != grablist.end())
-                        if (grablist[egg_target].second > dis)
-                            grablist[egg_target] =
-                                std::make_pair(player_id, dis);
+                      if (grablist[egg_target].second > dis)
+                        grablist[egg_target] = std::make_pair(player_id, dis);
+                  }
                 }
             }
         }
     }
+    // Remove the egg in the world and set the player's egg data
     for (auto item : grablist) {
         if (b2eggs[item.first] == nullptr)
             continue;
@@ -269,6 +270,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
         b2world->DestroyBody(b2eggs[item.first]);
         b2eggs[item.first] = nullptr;
     }
+    // Grab egg from other player
     for (auto item : grabfromplayerlist) {
         players[item.second.first]->set_egg(players[item.first]->egg());
         players[item.first]->set_egg(-1);
