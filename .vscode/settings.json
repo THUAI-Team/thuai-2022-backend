@@ -5,6 +5,7 @@
     "random": "cpp",
     "filesystem": "cpp",
     "istream": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "memory": "cpp"
   }
 }

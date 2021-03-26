@@ -16,7 +16,6 @@ using namespace thuai;
 constexpr const int FPS = 60, FRAME_COUNT = FPS * 120, FRAMES_PER_STATE = 6; // FIXME: 120 seconds!
 const int32 velocityIterations = 10, positionIterations = 8;
 int main(void) {
-
   json init_msg, config;
   read_from_judger(init_msg);
   if (init_msg["player_num"] != 3) {
@@ -31,6 +30,10 @@ int main(void) {
 
   Record record(FPS);
   std::shared_ptr<World> world(std::make_shared<World>());
+
+  for (int i = 0; i < EGG_COUNT; i++) {
+    record.init_egg_score(*(world->eggs[i]));
+  }
 
   auto init_config =
       R"({"state": 0, "time": 3, "length": 4096})"_json; // TODO: time=0.1
@@ -106,7 +109,7 @@ int main(void) {
       record.set_egg_in_frame(*(world->eggs[i]));
     }
   }
-  
+
   int r_score = world->score[0], y_score = world->score[1],
       b_score = world->score[2]; // calculate score
   record.set_score(r_score, y_score, b_score);
@@ -114,7 +117,7 @@ int main(void) {
   std::ofstream of(std::string(init_msg["replay"]), std::ios::binary);
   record.serialize(of);
   of.close();
-  
+
   json end_info = {{"0", r_score}, {"1", y_score}, {"2", b_score}};
   write_to_judger(json({{"state", -1}, {"end_info", end_info.dump()}}), -1);
 
