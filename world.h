@@ -15,7 +15,6 @@ const double MIN_GRAB_DIS = .1 + PLAYER_RADIUS;
 const double INNER_SPEED_REDUCE_RADIUS = 18.0,
              OUTER_SPEED_REDUCE_RADIUS = 20.0;
 const double SPEED_ON_SPEED_REDUCE = .5;
-const int GROUND_POLYGON_VERTEX_COUNT = 36; // This have to be a multiple of 6
 const int SLIP_FRAMES = 12;
 
 double

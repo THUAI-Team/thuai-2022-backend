@@ -104,26 +104,42 @@ World::World() {
     this->m_contactlistener = new ContactListener();
     b2world->SetContactListener(m_contactlistener);
     b2BodyDef groundBodyDef;
-    b2Vec2 ve[GROUND_POLYGON_VERTEX_COUNT];
-    for (int i = 0; i < GROUND_POLYGON_VERTEX_COUNT; i++) {
-      float vertex_cnt_f = GROUND_POLYGON_VERTEX_COUNT;
-      if ((i % (GROUND_POLYGON_VERTEX_COUNT / 3)) <
-          (GROUND_POLYGON_VERTEX_COUNT / 6))
-        ve[i].Set(static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) *
-                                     cos(i / vertex_cnt_f * 2 * pi)),
-                  static_cast<float>((DIAMETER / 2 + GOAL_WIDTH) *
-                                     sin(i / vertex_cnt_f * 2 * pi)));
-      else
-        ve[i].Set(
-            static_cast<float>((DIAMETER / 2) * cos(i / vertex_cnt_f * 2 * pi)),
-            static_cast<float>((DIAMETER / 2) *
-                               sin(i / vertex_cnt_f * 2 * pi)));
+    int vertex_count = 0;
+    b2Vec2 ve[720];
+    for (int i = 0; i < 360;
+         i++) { // use degree not rad to create bound here for smoother egde
+      for (int k = 0; k < 3; k++) { // three goals
+        if (i > 60 * k - ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180) &&
+            i < 60 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180)) {
+          // goal's inner edge vertex is at 45.522 74.478 (degree), so on the
+          // circle vertex at 45 and 75 is needed , 46 and 74 is not the asin's
+          // value is 14.4775
+          ve[vertex_count++].Set(
+            (DIAMETER / 2) *
+              cos((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)),
+            (DIAMETER / 2) *
+              sin((1 + 2 * k) * pi / 3 -
+                  asin(GOAL_LENGTH /
+                       DIAMETER))); // vertex on circle (goal's inner edge)
+
+          ve[vertex_count++].Set(
+            (DIAMETER / 2 + GOAL_WIDTH) *
+              cos((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)),
+            (DIAMETER / 2 + GOAL_WIDTH) *
+              sin((1 + 2 * k) * pi / 3 -
+                  asin(GOAL_LENGTH / DIAMETER))); // vertex on goal's outer edge
+        }
+
+        ve[vertex_count++].Set(
+          (DIAMETER / 2) * cos(i / 180 * pi),
+          (DIAMETER / 2) * sin(i / 180 * pi)); // vertex to create a circle
+      }
     }
     groundBodyDef.position.Set(.0f, .0f);
     b2Body *groundBody = b2world->CreateBody(&groundBodyDef);
 
     b2ChainShape groundChain;
-    groundChain.CreateLoop(ve, 18);
+    groundChain.CreateLoop(ve, vertex_count);
     // finish the goal region
 
     groundBody->CreateFixture(&groundChain, .0f);
