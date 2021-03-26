@@ -106,42 +106,41 @@ World::World() {
     b2BodyDef groundBodyDef;
     int vertex_count = 0;
     b2Vec2 ve[360];
+    const float half_angel_of_per_goal = asin(float(GOAL_LENGTH) / float(DIAMETER)); // caution of int / int !!!
     for (int i = 0; i < 360;
          i++) { // use degree not rad to create bound here for smoother egde
       for (int k = 0; k < 3; k++) // three goals
-        if (i > 60 + 120 * k - ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180) &&
-            i < 60 + 120 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180)) {
+        if (i > 60 + 120 * k - ceil(half_angel_of_per_goal / pi * 180) &&
+            i < 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180)) {
           // goal's inner edge vertex is at 45.522 74.478 (degree), so on the
           // circle vertex at 45 and 75 is needed , 46 and 74 is not the asin's
           // value is 14.4775
           ve[vertex_count++].Set(
+            (DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 - half_angel_of_per_goal),
             (DIAMETER / 2) *
-              cos((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)),
-            (DIAMETER / 2) *
-              sin((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)));
+              sin((1 + 2 * k) * pi / 3 - half_angel_of_per_goal));
 
           ve[vertex_count++].Set(
-            (DIAMETER / 2) *
-              cos((1 + 2 * k) * pi / 3 + asin(GOAL_LENGTH / DIAMETER)),
+            (DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 + half_angel_of_per_goal),
             (DIAMETER / 2) *
               sin((1 + 2 * k) * pi / 3 +
-                  asin(GOAL_LENGTH /
-                       DIAMETER))); // vertex on circle (goal's inner edge)
+                  half_angel_of_per_goal)); // vertex on circle (goal's inner
+                                            // edge)
 
           ve[vertex_count++].Set(
             (DIAMETER / 2 + GOAL_WIDTH) *
-              cos((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)),
+              cos((1 + 2 * k) * pi / 3 - half_angel_of_per_goal),
             (DIAMETER / 2 + GOAL_WIDTH) *
-              sin((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)));
+              sin((1 + 2 * k) * pi / 3 - half_angel_of_per_goal));
 
           ve[vertex_count++].Set(
             (DIAMETER / 2 + GOAL_WIDTH) *
-              cos((1 + 2 * k) * pi / 3 + asin(GOAL_LENGTH / DIAMETER)),
+              cos((1 + 2 * k) * pi / 3 + half_angel_of_per_goal),
             (DIAMETER / 2 + GOAL_WIDTH) *
               sin((1 + 2 * k) * pi / 3 +
-                  asin(GOAL_LENGTH / DIAMETER))); // vertex on goal's outer edge
+                  half_angel_of_per_goal)); // vertex on goal's outer edge
 
-          i = 60 + 120 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180);
+          i = 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180);
           break;
         }
       ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180 * pi),
