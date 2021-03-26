@@ -220,13 +220,15 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
          && fabs(player->GetPosition().y - this->players[player_id]->position().y) < 1e-5) {
             continue;
         }
-        
+
         if (get_distance(player, pos_to_be_placed) <= EGG_RADIUS + PLAYER_RADIUS) {
           can_be_placed = false;
           break;
         }
       }
       if (can_be_placed) {
+        eggs[players[player_id]->egg()]->set_position(pos_to_be_placed);
+        eggs[players[player_id]->egg()]->set_velocity({.0, .0});
         addEgg(players[player_id]->egg());
         players[player_id]->set_egg(-1);
       }
@@ -391,9 +393,11 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
       }
     }
 
-    for (int i = 0; i < EGG_COUNT; i++) {
-      for (int k = 0; k < 3; k++)
+    for (int k = 0; k < 3; k++) {
         score[k] = 0;
+    }
+
+    for (int i = 0; i < EGG_COUNT; i++) {
       if (b2eggs[i] == nullptr)
         continue;
       eggs[i]->set_position(
@@ -403,8 +407,11 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
       if (get_distance(b2eggs[i], {0, 0}) > DIAMETER / 2) {
         double eggangle = atan2(static_cast<float>(b2eggs[i]->GetPosition().y),
                                 static_cast<float>(b2eggs[i]->GetPosition().x));
+        if (eggangle < 0) {
+            eggangle += 2 * pi;
+        }
         for (int k = 0; k < 3; k++) {
-          if (eggangle < 2 * k * pi / 3) {
+          if (eggangle < 2 * (k+1) * pi / 3) {
             score[k] += eggs[i]->score();
             break;
           }
