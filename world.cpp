@@ -108,7 +108,7 @@ World::World() {
     b2Vec2 ve[360];
     for (int i = 0; i < 360;
          i++) { // use degree not rad to create bound here for smoother egde
-      for (int k = 0; k < 3; k++) { // three goals
+      for (int k = 0; k < 3; k++) // three goals
         if (i > 60 + 120 * k - ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180) &&
             i < 60 + 120 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180)) {
           // goal's inner edge vertex is at 45.522 74.478 (degree), so on the
@@ -144,11 +144,9 @@ World::World() {
           i = 60 + 120 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180);
           break;
         }
-
-        ve[vertex_count++].Set(
-          (DIAMETER / 2) * cos(i / 180 * pi),
-          (DIAMETER / 2) * sin(i / 180 * pi)); // vertex to create a circle
-      }
+      ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180 * pi),
+                             (DIAMETER / 2) *
+                               sin(i / 180 * pi)); // vertex to create a circle
     }
     groundBodyDef.position.Set(.0f, .0f);
     b2Body *groundBody = b2world->CreateBody(&groundBodyDef);
