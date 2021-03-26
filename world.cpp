@@ -312,6 +312,7 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
       auto currentPlayer = players[i];
       auto b2currentPlayer = b2players[i];
       bool isSpeedDown = false;
+      
       // reduce player's velocity if distance satisfies part I
       double player_distance_to_origin = get_distance(b2currentPlayer, {0, 0});
       if (player_distance_to_origin <= OUTER_SPEED_REDUCE_RADIUS &&

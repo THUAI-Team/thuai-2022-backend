@@ -12,8 +12,8 @@ const double DIAMETER = 40.0, GOAL_LENGTH = 10.0, GOAL_WIDTH = 5.0,
              RUN_SPEED = 4.0, WALK_SPEED_EMPTY = 2.0;
 const double PLAYER_RADIUS = .24, EGG_RADIUS = .35;
 const double MIN_GRAB_DIS = .1 + PLAYER_RADIUS;
-const double INNER_SPEED_REDUCE_RADIUS = 18.0 / 2,
-             OUTER_SPEED_REDUCE_RADIUS = 20.0 / 2;
+const double INNER_SPEED_REDUCE_RADIUS = 18.0,
+             OUTER_SPEED_REDUCE_RADIUS = 20.0;
 const double SPEED_ON_SPEED_REDUCE = .5;
 const int GROUND_POLYGON_VERTEX_COUNT = 36; // This have to be a multiple of 6
 const int SLIP_FRAMES = 12;
