@@ -105,7 +105,7 @@ World::World() {
     b2world->SetContactListener(m_contactlistener);
     b2BodyDef groundBodyDef;
     int vertex_count = 0;
-    b2Vec2 ve[720];
+    b2Vec2 ve[360];
     for (int i = 0; i < 360;
          i++) { // use degree not rad to create bound here for smoother egde
       for (int k = 0; k < 3; k++) { // three goals
@@ -140,6 +140,9 @@ World::World() {
             (DIAMETER / 2 + GOAL_WIDTH) *
               sin((1 + 2 * k) * pi / 3 +
                   asin(GOAL_LENGTH / DIAMETER))); // vertex on goal's outer edge
+
+          i = 60 + 120 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180);
+          break;
         }
 
         ve[vertex_count++].Set(
