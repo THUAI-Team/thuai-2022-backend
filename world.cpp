@@ -109,8 +109,8 @@ World::World() {
     for (int i = 0; i < 360;
          i++) { // use degree not rad to create bound here for smoother egde
       for (int k = 0; k < 3; k++) { // three goals
-        if (i > 60 * k - ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180) &&
-            i < 60 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180)) {
+        if (i > 60 + 120 * k - ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180) &&
+            i < 60 + 120 * k + ceil(asin(GOAL_LENGTH / DIAMETER) / pi * 180)) {
           // goal's inner edge vertex is at 45.522 74.478 (degree), so on the
           // circle vertex at 45 and 75 is needed , 46 and 74 is not the asin's
           // value is 14.4775
@@ -118,7 +118,13 @@ World::World() {
             (DIAMETER / 2) *
               cos((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)),
             (DIAMETER / 2) *
-              sin((1 + 2 * k) * pi / 3 -
+              sin((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)));
+
+          ve[vertex_count++].Set(
+            (DIAMETER / 2) *
+              cos((1 + 2 * k) * pi / 3 + asin(GOAL_LENGTH / DIAMETER)),
+            (DIAMETER / 2) *
+              sin((1 + 2 * k) * pi / 3 +
                   asin(GOAL_LENGTH /
                        DIAMETER))); // vertex on circle (goal's inner edge)
 
@@ -126,7 +132,13 @@ World::World() {
             (DIAMETER / 2 + GOAL_WIDTH) *
               cos((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)),
             (DIAMETER / 2 + GOAL_WIDTH) *
-              sin((1 + 2 * k) * pi / 3 -
+              sin((1 + 2 * k) * pi / 3 - asin(GOAL_LENGTH / DIAMETER)));
+
+          ve[vertex_count++].Set(
+            (DIAMETER / 2 + GOAL_WIDTH) *
+              cos((1 + 2 * k) * pi / 3 + asin(GOAL_LENGTH / DIAMETER)),
+            (DIAMETER / 2 + GOAL_WIDTH) *
+              sin((1 + 2 * k) * pi / 3 +
                   asin(GOAL_LENGTH / DIAMETER))); // vertex on goal's outer edge
         }
 
