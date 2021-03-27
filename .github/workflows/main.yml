@@ -76,6 +76,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: eggs-${{ matrix.config.os }}-${{git rev-parse --short "$GITHUB_SHA"}}
+          asset_name: eggs-${{ matrix.config.os }}
           asset_path: ./bin/main
           asset_content_type: application/octet-stream
