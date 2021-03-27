@@ -30,8 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ github.sha }}
           draft: false
           prerelease: false
 
@@ -59,6 +58,7 @@ jobs:
         if: matrix.config.os != 'windows-latest'
         working-directory: ./tools/vcpkg
         run: |
+          ls -al
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
           ./vcpkg install box2d
