@@ -18,12 +18,23 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   set_latest:
-    name: Mark the latest release
+    name: Tag and mark the latest release
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      - name: Modify version file
+        run: |
+          git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
+          echo ${{ env.SHORT_SHA }} > ./latest_version
+          git config --global user.name "panda2134"
+          git config --global user.email "ljypanda@live.com"
+          git add ./latest_version
+          git commit -m "Update version to ${{ env.SHORT_SHA }}"
+          git tag ${{ env.SHORT_SHA }}
+          git status
+          git push
       - uses: EndBug/latest-tag@latest
   create_release:
     name: Create release
