@@ -60,6 +60,10 @@ jobs:
       - name: get-cmake
         uses: lukka/get-cmake@v3.19.2
 
+      - name: get-randr
+        if: matrix.config.os == 'ubuntu-latest'
+        run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
+
       - name: install-vcpkg-unix
         if: matrix.config.os != 'windows-latest'
         working-directory: ./tools/vcpkg
@@ -69,10 +73,6 @@ jobs:
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
           ./vcpkg install box2d
-          
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
       
       - name: install-vcpkg-windows
         if: matrix.config.os == 'windows-latest'
