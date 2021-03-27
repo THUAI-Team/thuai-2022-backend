@@ -60,6 +60,7 @@ jobs:
       - name: install-vcpkg-unix
         if: matrix.config.os != 'windows-latest'
         working-directory: ./tools/vcpkg
+        timeout-minutes: 10
         run: |
           ls -al
           ./bootstrap-vcpkg.sh
@@ -69,6 +70,7 @@ jobs:
       - name: install-vcpkg-windows
         if: matrix.config.os == 'windows-latest'
         shell: pwsh
+        timeout-minutes: 10
         working-directory: .\tools\vcpkg
         run: |
           .\bootstrap-vcpkg.bat
