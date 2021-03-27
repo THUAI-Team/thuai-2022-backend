@@ -120,32 +120,31 @@ World::World() {
             (DIAMETER / 2) *
               sin((1 + 2 * k) * pi / 3 - half_angel_of_per_goal));
 
+          ve[vertex_count++].Set((DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 -
+                                                      half_angel_of_per_goal) +
+                                   GOAL_WIDTH * cos((1 + 2 * k) * pi / 3),
+                                 (DIAMETER / 2) * sin((1 + 2 * k) * pi / 3 -
+                                                      half_angel_of_per_goal) +
+                                   GOAL_WIDTH * sin((1 + 2 * k) * pi / 3));
+
+          ve[vertex_count++].Set((DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 +
+                                                      half_angel_of_per_goal) +
+                                   GOAL_WIDTH * cos((1 + 2 * k) * pi / 3),
+                                 (DIAMETER / 2) * sin((1 + 2 * k) * pi / 3 +
+                                                      half_angel_of_per_goal) +
+                                   GOAL_WIDTH * sin((1 + 2 * k) * pi / 3));
+
           ve[vertex_count++].Set(
             (DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 + half_angel_of_per_goal),
             (DIAMETER / 2) *
-              sin((1 + 2 * k) * pi / 3 +
-                  half_angel_of_per_goal)); // vertex on circle (goal's inner
-                                            // edge)
+              sin((1 + 2 * k) * pi / 3 + half_angel_of_per_goal));
 
-          ve[vertex_count++].Set(
-            (DIAMETER / 2 + GOAL_WIDTH) *
-              cos((1 + 2 * k) * pi / 3 - half_angel_of_per_goal),
-            (DIAMETER / 2 + GOAL_WIDTH) *
-              sin((1 + 2 * k) * pi / 3 - half_angel_of_per_goal));
-
-          ve[vertex_count++].Set(
-            (DIAMETER / 2 + GOAL_WIDTH) *
-              cos((1 + 2 * k) * pi / 3 + half_angel_of_per_goal),
-            (DIAMETER / 2 + GOAL_WIDTH) *
-              sin((1 + 2 * k) * pi / 3 +
-                  half_angel_of_per_goal)); // vertex on goal's outer edge
-
-          i = 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180);
+          i = 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180.);
           break;
         }
-      ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180.0 * pi),
+      ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180. * pi),
                              (DIAMETER / 2) *
-                               sin(i / 180.0 * pi)); // vertex to create a circle
+                               sin(i / 180. * pi)); // vertex to create a circle
     }
 
     std::reverse(ve, ve+vertex_count);
