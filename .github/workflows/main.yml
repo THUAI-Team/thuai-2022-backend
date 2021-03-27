@@ -90,7 +90,7 @@ jobs:
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        if: matrix.config.os == 'ubuntu-latest'
+        if: ${{ failure() }}
 
       - name: upload-release-windows
         if: matrix.config.os == 'windows-latest'
