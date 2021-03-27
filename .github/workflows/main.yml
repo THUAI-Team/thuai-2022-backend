@@ -109,7 +109,7 @@ jobs:
         if: matrix.config.os == 'windows-2019'
         run: |
           git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
-          cp ./bin/Debug/main.exe ./remote_repo/eggs-windows-x86_64.exe
+          cp ./bin/Debug/main.exe ./remote_repo/eggs-windows-x86_64
           cd ./remote_repo
           git config --global user.name "panda2134"
           git config --global user.email "ljypanda@live.com"

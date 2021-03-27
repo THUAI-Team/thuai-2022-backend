@@ -1,5 +1,7 @@
 # thuai-egg-2021-backend
 
+[![build](https://github.com/ssast-tech/thuai-egg-2021-backend/actions/workflows/main.yml/badge.svg)](https://github.com/ssast-tech/thuai-egg-2021-backend/actions/workflows/main.yml)
+
 # How to build
 
 - fetch all the submodules
