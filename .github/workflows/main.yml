@@ -45,7 +45,8 @@ jobs:
           tag_name: ${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
-          # repo: ssast-tech/thuai-egg-releases
+          owner: ssast-tech
+          repo: thuai-egg-releases
 
   build:
     name: Build artifacts
