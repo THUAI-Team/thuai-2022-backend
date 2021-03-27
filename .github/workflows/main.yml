@@ -84,13 +84,13 @@ jobs:
           .\vcpkg integrate install
           .\vcpkg install box2d:x64-windows
       
+      - name: switch-to-clang
+        if: matrix.config.os == 'ubuntu-latest'
+        run: sudo update-alternatives --set c++ `which clang++`
+      
       - name: build
         shell: pwsh
         run: ./build.ps1
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
 
       - name: upload-release-windows
         if: matrix.config.os == 'windows-latest'
