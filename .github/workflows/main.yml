@@ -24,14 +24,16 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_name: ${{ github.sha }}
-          tag_name: ${{ github.sha }}
+          release_name: ${{ env.SHORT_SHA }}
+          tag_name: ${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
 
