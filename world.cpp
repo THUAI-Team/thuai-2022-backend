@@ -147,11 +147,7 @@ World::World() {
                                sin(i / 180. * pi)); // vertex to create a circle
     }
 
-    std::reverse(ve, ve+vertex_count);
-
-    for (int i = 0; i < vertex_count; i++) {
-      std::cerr << "::" << ve[i].x << ',' << ve[i].y << '\n';
-    }
+    std::reverse(ve, ve+vertex_count); // to ensure that normal vector is on the correct side
 
     groundBodyDef.position.Set(.0f, .0f);
     b2Body *groundBody = b2world->CreateBody(&groundBodyDef);
@@ -281,7 +277,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
         if (b2eggs[egg_target] == nullptr) {
           for (int i = 0; i < PLAYER_COUNT; i++) {
             if (players[i]->egg() == egg_target) {
-              auto dis = get_distance(b2eggs[egg_target], b2players[i]);
+              auto dis = get_distance(pos_of_player, b2players[i]);
               if (dis <= EGG_RADIUS + MIN_GRAB_DIS) {
                 if (grab_from_player_list.find(i) == grab_from_player_list.end() 
                   || grab_from_player_list[i].second > dis) {
