@@ -69,6 +69,10 @@ jobs:
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
           ./vcpkg install box2d
+          
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
       
       - name: install-vcpkg-windows
         if: matrix.config.os == 'windows-latest'
@@ -78,7 +82,7 @@ jobs:
         run: |
           .\bootstrap-vcpkg.bat
           .\vcpkg integrate install
-          .\vcpkg install box2d:x64-windows || cat /home/runner/work/thuai-egg-2021-backend/thuai-egg-2021-backend/tools/vcpkg/buildtrees/box2d/config-x64-linux-dbg-err.log
+          .\vcpkg install box2d:x64-windows
       
       - name: build
         shell: pwsh
