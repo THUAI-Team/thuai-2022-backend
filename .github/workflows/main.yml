@@ -19,7 +19,8 @@ on:
 jobs:
   set_latest:
     name: Mark the latest release
-    uses: EndBug/latest-tag@latest
+    steps:
+      - uses: EndBug/latest-tag@latest
   create_release:
     name: Create release
     runs-on: ubuntu-20.04
