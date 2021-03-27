@@ -34,7 +34,7 @@ jobs:
           git commit -m "Update version to ${{ env.SHORT_SHA }}"
           git tag -a ${{ env.SHORT_SHA }} -m "Tag ${{env.SHORT_SHA}}"
           git status
-          git push
+          git push --tags
       - uses: EndBug/latest-tag@latest
   create_release:
     name: Create release
