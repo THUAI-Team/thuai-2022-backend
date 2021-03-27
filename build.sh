@@ -2,8 +2,8 @@
 
 basedir=$(realpath $(dirname $BASH_SOURCE))
 
-mkdir $basedir/build
-cd $basedir/build
+mkdir $basedir/bin
+cd $basedir/bin
 
 cmake $basedir
 cmake --build .

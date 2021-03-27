@@ -33,9 +33,9 @@ include_directories(include/record-sdk/)
 file(GLOB SOURCES "*.cpp" "include/record-sdk/cpp_record_sdk/entities.cpp" "include/record-sdk/cpp_record_sdk/record.cpp")
 
 # add the executable
-add_executable(egg2021 ${SOURCES})
+add_executable(main ${SOURCES})
 
 find_package(unofficial-box2d CONFIG REQUIRED)
-target_include_directories(egg2021 PRIVATE include/cpp_record_sdk)
-target_link_libraries(egg2021 PRIVATE unofficial::box2d::box2d)
-target_link_libraries(egg2021 PRIVATE nlohmann_json::nlohmann_json)
+target_include_directories(main PRIVATE include/cpp_record_sdk)
+target_link_libraries(main PRIVATE unofficial::box2d::box2d)
+target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
