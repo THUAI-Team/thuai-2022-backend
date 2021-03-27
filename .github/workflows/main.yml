@@ -57,8 +57,8 @@ jobs:
 
       - name: install-vcpkg-unix
         if: matrix.config.os != 'windows-latest'
+        working-directory: ./tools/vcpkg
         run: |
-          cd $GITHUB_WORKSPACE/tools/vcpkg
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
           ./vcpkg install box2d
@@ -66,17 +66,15 @@ jobs:
       - name: install-vcpkg-windows
         if: matrix.config.os == 'windows-latest'
         shell: pwsh
+        working-directory: .\tools\vcpkg
         run: |
-          cd tools\vcpkg
           .\bootstrap-vcpkg.bat
           .\vcpkg integrate install
           .\vcpkg install box2d:x64-windows
       
       - name: build
         shell: pwsh
-        run: |
-          cd $GITHUB_WORKSPACE
-          ./build.ps1
+        run: ./build.ps1
 
       - name: upload-release-windows
         if: matrix.config.os == 'windows-latest'
