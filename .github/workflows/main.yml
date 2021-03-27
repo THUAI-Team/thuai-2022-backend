@@ -17,6 +17,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  set_latest:
+    name: Mark the latest release
+    uses: EndBug/latest-tag@latest
   create_release:
     name: Create release
     runs-on: ubuntu-20.04
@@ -36,6 +39,8 @@ jobs:
           tag_name: ${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
+          owner: ssast-tech
+          repo: ssast-tech/thuai-egg-releases
 
   build:
     name: Build artifacts
@@ -57,14 +62,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: get-cmake
+      - name: Get CMake
         uses: lukka/get-cmake@v3.19.2
 
-      - name: get-randr
+      - name: Get RandR Lib for Ubuntu
         if: matrix.config.os == 'ubuntu-20.04'
         run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
 
-      - name: install-vcpkg-unix
+      - name: Install vcpkg on unix-like systems
         if: matrix.config.os != 'windows-2019'
         working-directory: ./tools/vcpkg
         timeout-minutes: 10
@@ -74,7 +79,7 @@ jobs:
           ./vcpkg integrate install
           ./vcpkg install box2d
       
-      - name: install-vcpkg-windows
+      - name: Install vcpkg on Windows
         if: matrix.config.os == 'windows-2019'
         shell: pwsh
         timeout-minutes: 10
@@ -84,17 +89,17 @@ jobs:
           .\vcpkg integrate install
           .\vcpkg install box2d:x64-windows
       
-      - name: switch-to-clang
+      - name: Swith to clang++ on Ubuntu
         if: matrix.config.os == 'ubuntu-20.04'
         run: |
           sudo apt-get install clang
           sudo update-alternatives --set c++ `which clang++`
       
-      - name: build
+      - name: Build the executable
         shell: pwsh
         run: ./build.ps1
 
-      - name: upload-release-windows
+      - name: Upload Windows release
         if: matrix.config.os == 'windows-2019'
         uses: actions/upload-release-asset@v1
         env:
@@ -104,7 +109,7 @@ jobs:
           asset_name: eggs-windows-x86_64.exe
           asset_path: ./bin/Debug/main.exe
           asset_content_type: application/octet-stream
-      - name: upload-release-unix
+      - name: Upload unix-like releases
         if: matrix.config.os != 'windows-2019'
         uses: actions/upload-release-asset@v1
         env:
