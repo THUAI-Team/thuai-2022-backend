@@ -304,12 +304,14 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
     if (b2eggs[item.first] == nullptr)
       continue;
     players[item.second.first]->set_egg(item.first);
+    players[item.second.first]->set_status(PlayerStatus::WALKING);
     b2world->DestroyBody(b2eggs[item.first]);
     b2eggs[item.first] = nullptr;
   }
   // Grab egg from other player
   for (auto item : grab_from_player_list) {
     players[item.second.first]->set_egg(players[item.first]->egg());
+    players[item.second.first]->set_status(PlayerStatus::WALKING);
     players[item.first]->set_egg(-1);
   }
 }

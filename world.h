@@ -15,7 +15,7 @@ const double MIN_GRAB_DIS = .1 + PLAYER_RADIUS;
 const double INNER_SPEED_REDUCE_RADIUS = 18.0,
              OUTER_SPEED_REDUCE_RADIUS = 20.0;
 const double SPEED_ON_SPEED_REDUCE = .5;
-const int SLIP_FRAMES = 12;
+const int SLIP_FRAMES = 90;
 
 double
 get_walk_speed_with_egg(double);
