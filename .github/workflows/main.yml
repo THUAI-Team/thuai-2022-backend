@@ -21,6 +21,9 @@ jobs:
     name: Mark the latest release
     runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - uses: EndBug/latest-tag@latest
   create_release:
     name: Create release
