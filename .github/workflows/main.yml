@@ -115,7 +115,7 @@ jobs:
           git add ./*
           git commit -m "Update executable of ${{ matrix.config.os }}"
           git status
-          git push
+          while ! git push; do sleep 5; git pull; done
       - name: Upload unix-like releases - Private
         if: matrix.config.os != 'windows-2019'
         uses: actions/upload-release-asset@v1
@@ -137,7 +137,7 @@ jobs:
           git add ./*
           git commit -m "Update executable of ${{ matrix.config.os }}"
           git status
-          git push
+          while ! git push; do sleep 5; git pull; done
 
   update_public_repo_tag:
     name: Tag the public release
