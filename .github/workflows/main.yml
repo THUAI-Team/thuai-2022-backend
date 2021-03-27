@@ -131,6 +131,7 @@ jobs:
           asset_content_type: application/octet-stream
       - name: Upload unix-like release - Public
         if: matrix.config.os != 'windows-2019'
+        shell: pwsh
         run: |
           git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
           cp ./bin/main ./remote_repo/eggs-${{matrix.config.os}}-x86_64
@@ -140,7 +141,8 @@ jobs:
           git add ./*
           git commit -m "Update executable of ${{ matrix.config.os }}"
           git status
-          while ! git push; do sleep 5; git pull; done
+          git push
+          while (! $?) { git pull; git push; }   
 
   update_public_repo_tag:
     name: Tag the public release
