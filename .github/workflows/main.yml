@@ -105,6 +105,7 @@ jobs:
           asset_path: ./bin/Debug/main.exe
           asset_content_type: application/octet-stream
       - name: Upload Windows release - Public
+        shell: pwsh
         if: matrix.config.os == 'windows-2019'
         run: |
           git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
@@ -115,7 +116,9 @@ jobs:
           git add ./*
           git commit -m "Update executable of ${{ matrix.config.os }}"
           git status
-          while ! git push; do sleep 5; git pull; done
+          git push
+          while (! $?) { git pull; git push; }   
+
       - name: Upload unix-like releases - Private
         if: matrix.config.os != 'windows-2019'
         uses: actions/upload-release-asset@v1
