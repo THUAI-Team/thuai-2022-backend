@@ -32,7 +32,7 @@ jobs:
           git config --global user.email "ljypanda@live.com"
           git add ./latest_version
           git commit -m "Update version to ${{ env.SHORT_SHA }}"
-          git tag ${{ env.SHORT_SHA }}
+          git tag -a ${{ env.SHORT_SHA }} -m "Tag ${{env.SHORT_SHA}}"
           git status
           git push
       - uses: EndBug/latest-tag@latest
