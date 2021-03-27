@@ -88,6 +88,10 @@ jobs:
         shell: pwsh
         run: ./build.ps1
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: matrix.config.os == 'ubuntu-latest'
+
       - name: upload-release-windows
         if: matrix.config.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
