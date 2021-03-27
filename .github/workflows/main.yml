@@ -17,28 +17,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  set_latest:
-    name: Tag and mark the latest release
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Add SHORT_SHA env property with commit short sha
-        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-      - name: Modify version file
-        run: |
-          git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases $GITHUB_WORKSPACE
-          cd $GITHUB_WORKSPACE
-          echo ${{ env.SHORT_SHA }} > ./latest_version
-          git config --global user.name "panda2134"
-          git config --global user.email "ljypanda@live.com"
-          git add ./latest_version
-          git commit -m "Update version to ${{ env.SHORT_SHA }}"
-          git tag -a ${{ env.SHORT_SHA }} -m "Tag ${{env.SHORT_SHA}}"
-          git status
-          git push --tags
-      - uses: EndBug/latest-tag@latest
   create_release:
     name: Create release
-    needs: set_latest # mark latest first
     runs-on: ubuntu-20.04
     # Note this. We are going to use that in further jobs.
     outputs:
@@ -56,8 +36,6 @@ jobs:
           tag_name: ${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
-          owner: ssast-tech
-          repo: thuai-egg-releases
 
   build:
     name: Build artifacts
@@ -116,7 +94,7 @@ jobs:
         shell: pwsh
         run: ./build.ps1
 
-      - name: Upload Windows release
+      - name: Upload Windows release - Private
         if: matrix.config.os == 'windows-2019'
         uses: actions/upload-release-asset@v1
         env:
@@ -126,7 +104,19 @@ jobs:
           asset_name: eggs-windows-x86_64.exe
           asset_path: ./bin/Debug/main.exe
           asset_content_type: application/octet-stream
-      - name: Upload unix-like releases
+      - name: Upload Windows release - Public
+        if: matrix.config.os == 'windows-2019'
+        run: |
+          git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
+          cp ./bin/Debug/main.exe ./remote_repo/eggs-windows-x86_64.exe
+          cd $GITHUB_WORKSPACE/remote_repo
+          git config --global user.name "panda2134"
+          git config --global user.email "ljypanda@live.com"
+          git add ./*
+          git commit -m "Update executable of ${{ matrix.config.os }}"
+          git status
+          git push
+      - name: Upload unix-like releases - Private
         if: matrix.config.os != 'windows-2019'
         uses: actions/upload-release-asset@v1
         env:
@@ -136,3 +126,36 @@ jobs:
           asset_name: eggs-${{ matrix.config.os }}-x86_64
           asset_path: ./bin/main
           asset_content_type: application/octet-stream
+      - name: Upload unix-like release - Public
+        if: matrix.config.os != 'windows-2019'
+        run: |
+          git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
+          cp ./bin/main ./remote_repo/eggs-${{matrix.config.os}}-x86_64
+          cd $GITHUB_WORKSPACE/remote_repo
+          git config --global user.name "panda2134"
+          git config --global user.email "ljypanda@live.com"
+          git add ./*
+          git commit -m "Update executable of ${{ matrix.config.os }}"
+          git status
+          git push
+
+  update_public_repo_tag:
+    name: Tag the public release
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      - name: Modify version file
+        run: |
+          git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
+          echo ${{ env.SHORT_SHA }} > ./latest_version
+          git config --global user.name "panda2134"
+          git config --global user.email "ljypanda@live.com"
+          git add ./latest_version
+          git commit -m "Update version to ${{ env.SHORT_SHA }}"
+          git tag -a ${{ env.SHORT_SHA }} -m "Tag ${{env.SHORT_SHA}}"
+          git status
+          git push --tags
+      - uses: EndBug/latest-tag@latest
