@@ -143,15 +143,23 @@ World::World() {
           i = 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180);
           break;
         }
-      ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180 * pi),
+      ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180.0 * pi),
                              (DIAMETER / 2) *
-                               sin(i / 180 * pi)); // vertex to create a circle
+                               sin(i / 180.0 * pi)); // vertex to create a circle
     }
+
+    std::reverse(ve, ve+vertex_count);
+
+    for (int i = 0; i < vertex_count; i++) {
+      std::cerr << "::" << ve[i].x << ',' << ve[i].y << '\n';
+    }
+
     groundBodyDef.position.Set(.0f, .0f);
     b2Body *groundBody = b2world->CreateBody(&groundBodyDef);
 
     b2ChainShape groundChain;
     groundChain.CreateLoop(ve, vertex_count);
+    
     // finish the goal region
 
     groundBody->CreateFixture(&groundChain, .0f);
