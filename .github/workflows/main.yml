@@ -19,7 +19,7 @@ on:
 jobs:
   create_release:
     name: Create release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     # Note this. We are going to use that in further jobs.
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -46,9 +46,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - os: ubuntu-latest
-          - os: macos-latest
-          - os: windows-latest
+          - os: ubuntu-20.04
+          - os: macos-10.15
+          - os: windows-2019
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,11 +61,11 @@ jobs:
         uses: lukka/get-cmake@v3.19.2
 
       - name: get-randr
-        if: matrix.config.os == 'ubuntu-latest'
+        if: matrix.config.os == 'ubuntu-20.04'
         run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
 
       - name: install-vcpkg-unix
-        if: matrix.config.os != 'windows-latest'
+        if: matrix.config.os != 'windows-2019'
         working-directory: ./tools/vcpkg
         timeout-minutes: 10
         run: |
@@ -75,7 +75,7 @@ jobs:
           ./vcpkg install box2d
       
       - name: install-vcpkg-windows
-        if: matrix.config.os == 'windows-latest'
+        if: matrix.config.os == 'windows-2019'
         shell: pwsh
         timeout-minutes: 10
         working-directory: .\tools\vcpkg
@@ -85,15 +85,17 @@ jobs:
           .\vcpkg install box2d:x64-windows
       
       - name: switch-to-clang
-        if: matrix.config.os == 'ubuntu-latest'
-        run: sudo update-alternatives --set c++ `which clang++`
+        if: matrix.config.os == 'ubuntu-20.04'
+        run: |
+          sudo apt-get install clang
+          sudo update-alternatives --set c++ `which clang++`
       
       - name: build
         shell: pwsh
         run: ./build.ps1
 
       - name: upload-release-windows
-        if: matrix.config.os == 'windows-latest'
+        if: matrix.config.os == 'windows-2019'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -103,12 +105,12 @@ jobs:
           asset_path: ./bin/Debug/main.exe
           asset_content_type: application/octet-stream
       - name: upload-release-unix
-        if: matrix.config.os != 'windows-latest'
+        if: matrix.config.os != 'windows-2019'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: eggs-${{ matrix.config.os }}
+          asset_name: eggs-${{ matrix.config.os }}-x86_64
           asset_path: ./bin/main
           asset_content_type: application/octet-stream
