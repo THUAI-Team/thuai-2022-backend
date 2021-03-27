@@ -78,7 +78,7 @@ jobs:
         run: |
           .\bootstrap-vcpkg.bat
           .\vcpkg integrate install
-          .\vcpkg install box2d:x64-windows
+          .\vcpkg install box2d:x64-windows || cat /home/runner/work/thuai-egg-2021-backend/thuai-egg-2021-backend/tools/vcpkg/buildtrees/box2d/config-x64-linux-dbg-err.log
       
       - name: build
         shell: pwsh
