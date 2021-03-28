@@ -42,7 +42,7 @@ int main(void) {
   }
 
   auto init_config =
-      R"({"state": 0, "time": 0.1, "length": 4096})"_json;
+      R"({"state": 0, "time": 1, "length": 4096})"_json;
 
   write_to_judger(init_config, -1);
 
