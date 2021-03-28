@@ -1,4 +1,4 @@
 0 0 python+../test-ai/py-sdk-7fa8664/main.py
 0 1 python+../test-ai/py-sdk-7fa8664/main.py
 0 2 python+../test-ai/py-sdk-7fa8664/main.py
-4 build/egg2021 dummyConfig out.bin
+4 bin/main dummyConfig out.bin
