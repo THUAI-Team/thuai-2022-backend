@@ -99,7 +99,7 @@ jobs:
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
             echo "build on windows, setting v140"
-            cmake -DCMAKE_CONFIGURATION_TYPES=Release ..
+            cmake --config Release -DCMAKE_CONFIGURATION_TYPES=Release ..
             cmake -DCMAKE_CONFIGURATION_TYPES=Release --build .
           } else {
             echo "build on *nix"
