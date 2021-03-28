@@ -98,9 +98,10 @@ jobs:
           cd ./bin
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
-            echo "build on windows, setting v140"
+            echo "build on windows"
             cmake -DCMAKE_CONFIGURATION_TYPES=Release ..
-            cmake --config Release -DCMAKE_CONFIGURATION_TYPES=Release --build .
+            echo "generated project files. now build..."
+            cmake --config Release --target ALL_BUILD -DCMAKE_CONFIGURATION_TYPES=Release--build .
           } else {
             echo "build on *nix"
             cmake .. -DCMAKE_BUILD_TYPE=Release
