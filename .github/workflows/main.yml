@@ -48,7 +48,7 @@ jobs:
         config:
           - os: ubuntu-16.04
           - os: macos-10.15
-          - os: windows-2019
+          - os: windows-2016
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -65,7 +65,7 @@ jobs:
         run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
 
       - name: Install vcpkg on unix-like systems
-        if: matrix.config.os != 'windows-2019'
+        if: matrix.config.os != 'windows-2016'
         working-directory: ./tools/vcpkg
         timeout-minutes: 10
         run: |
@@ -75,7 +75,7 @@ jobs:
           ./vcpkg install box2d
       
       - name: Install vcpkg on Windows
-        if: matrix.config.os == 'windows-2019'
+        if: matrix.config.os == 'windows-2016'
         shell: pwsh
         timeout-minutes: 10
         working-directory: .\tools\vcpkg
@@ -109,7 +109,7 @@ jobs:
           cd ..
 
       - name: Upload Windows release - Private
-        if: matrix.config.os == 'windows-2019'
+        if: matrix.config.os == 'windows-2016'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,7 +121,7 @@ jobs:
       
       - name: Upload Windows release - Public
         shell: pwsh
-        if: matrix.config.os == 'windows-2019'
+        if: matrix.config.os == 'windows-2016'
         run: |
           git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
           cp ./bin/Release/main.exe ./remote_repo/eggs-windows-x86_64
@@ -135,7 +135,7 @@ jobs:
           while (! $?) { git pull; git push; }   
 
       - name: Upload unix-like releases - Private
-        if: matrix.config.os != 'windows-2019'
+        if: matrix.config.os != 'windows-2016'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -145,7 +145,7 @@ jobs:
           asset_path: ./bin/main
           asset_content_type: application/octet-stream
       - name: Upload unix-like release - Public
-        if: matrix.config.os != 'windows-2019'
+        if: matrix.config.os != 'windows-2016'
         shell: pwsh
         run: |
           git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
