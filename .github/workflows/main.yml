@@ -180,7 +180,7 @@ jobs:
           echo ${{ env.SHORT_SHA }} > ./latest_version
           git config --global user.name "panda2134"
           git config --global user.email "ljypanda@live.com"
-          git add ./latest_version
+          git add *
           git commit -m "Update version to ${{ env.SHORT_SHA }}"
           git tag -a ${{ env.SHORT_SHA }} -m "Tag ${{env.SHORT_SHA}}"
           git status
