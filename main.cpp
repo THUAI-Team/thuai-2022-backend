@@ -42,7 +42,7 @@ int main(void) {
   }
 
   auto init_config =
-      R"({"state": 0, "time": 1, "length": 4096})"_json;
+      R"({"state": 0, "time": 5, "length": 4096})"_json; // TODO: TIME LIMIT
 
   write_to_judger(init_config, -1);
 
@@ -84,7 +84,9 @@ int main(void) {
         json incoming_msg;
         std::cerr << "Waiting for next message...\n"; 
         read_from_judger(incoming_msg);
-        std::cerr << "Got incoming message: " << incoming_msg << std::endl;
+        if (state >= 28) {
+          std::cerr << "Got incoming message: ###" << incoming_msg << "###" << std::endl;
+        }
         if (incoming_msg["player"] >= 0) {
           auto detail = json::parse(std::string(incoming_msg["content"]));
           std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
