@@ -19,7 +19,7 @@ on:
 jobs:
   create_release:
     name: Create release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-16.04
     # Note this. We are going to use that in further jobs.
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -46,7 +46,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - os: ubuntu-20.04
+          - os: ubuntu-16.04
           - os: macos-10.15
           - os: windows-2019
 
@@ -61,7 +61,7 @@ jobs:
         uses: lukka/get-cmake@v3.19.2
 
       - name: Get RandR Lib for Ubuntu
-        if: matrix.config.os == 'ubuntu-20.04'
+        if: matrix.config.os == 'ubuntu-16.04'
         run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
 
       - name: Install vcpkg on unix-like systems
@@ -85,9 +85,10 @@ jobs:
           .\vcpkg install box2d:x64-windows
       
       - name: Swith to clang++ on Ubuntu
-        if: matrix.config.os == 'ubuntu-20.04'
+        if: matrix.config.os == 'ubuntu-16.04'
         run: |
           sudo apt-get install clang
+          sudo update-alternatives --set cc `which clang`
           sudo update-alternatives --set c++ `which clang++`
       
       - name: Build the executable
@@ -147,7 +148,7 @@ jobs:
   update_public_repo_tag:
     name: Tag the public release
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-16.04
     steps:
       - name: Add SHORT_SHA env property with commit short sha
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
