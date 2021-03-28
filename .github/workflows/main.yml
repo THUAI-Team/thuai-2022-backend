@@ -96,7 +96,7 @@ jobs:
         run: |
           mkdir ./bin
           cd ./bin
-          $os=${{matrix.config.os}}
+          $os="${{matrix.config.os}}"
           if ($os -contains 'windows') {
             cmake .. -DCMAKE_CONFIGURATION_TYPES=Release
           } else {
