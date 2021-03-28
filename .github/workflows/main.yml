@@ -99,9 +99,8 @@ jobs:
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
             echo "build on windows, setting v140"
-            cmake   -T v140 -DCMAKE_CONFIGURATION_TYPES=Release ..
-            devenv.exe upgrade
-            cmake -DCMAKE_CONFIGURATION_TYPES=Release  -T v140 --build .
+            cmake -DCMAKE_CONFIGURATION_TYPES=Release ..
+            cmake -DCMAKE_CONFIGURATION_TYPES=Release --build .
           } else {
             echo "build on *nix"
             cmake .. -DCMAKE_BUILD_TYPE=Release
