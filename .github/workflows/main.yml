@@ -99,8 +99,10 @@ jobs:
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
             cmake .. -DCMAKE_CONFIGURATION_TYPES=Release
+            cmake -DCMAKE_CONFIGURATION_TYPES=Release --build .
           } else {
             cmake .. -DCMAKE_BUILD_TYPE=Release
+            cmake --build . 
           }
           cmake --build . 
           ls .
