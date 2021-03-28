@@ -54,7 +54,7 @@ int main(void) {
 
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
 
-    if (state >= 28) {
+    if (state % 20 == 0) {
       std::cerr << "Current frame = " << cur_frame << std::endl;
     }
 
@@ -88,12 +88,12 @@ int main(void) {
         json incoming_msg;
         std::cerr << "Waiting for next message...\n"; 
         read_from_judger(incoming_msg);
-        if (state >= 28) {
+        if (state % 20 == 0) {
           std::cerr << "Got incoming message: ###" << incoming_msg << "###" << std::endl;
         }
         if (incoming_msg["player"] >= 0) {
           auto detail = json::parse(std::string(incoming_msg["content"]));
-          if (state >= 28) {
+          if (state % 20 == 0) {
             std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
           }
           if (detail["state"] == state) { // ensure that state is synchronized
@@ -131,14 +131,19 @@ int main(void) {
     }
   }
 
+  std::cerr << "*****Game Ended!*****\n";
+
   int r_score = world->score[0], y_score = world->score[1],
       b_score = world->score[2]; // calculate score
   record.set_score(r_score, y_score, b_score);
+  std::cerr << "Scores:" << r_score << ',' << y_score << ',' << b_score << '\n';
 
+  std::cerr << "Writing replay to file...\n";
   std::ofstream of(std::string(init_msg["replay"]), std::ios::binary);
   record.serialize(of);
   of.close();
 
+  std::cerr << "Writing end_info..\n";
   json end_info = {{"0", r_score}, {"1", y_score}, {"2", b_score}};
   write_to_judger(json({{"state", -1}, {"end_info", end_info.dump()}}), -1);
 
