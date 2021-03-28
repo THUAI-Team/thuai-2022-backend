@@ -91,6 +91,10 @@ jobs:
           sudo update-alternatives --set cc `which clang`
           sudo update-alternatives --set c++ `which clang++`
       
+      - name: Add msbuild to PATH
+        if: matrix.config.os == 'windows-2019'
+        uses: microsoft/setup-msbuild@v1.0.2
+
       - name: Build the executable
         shell: pwsh
         run: |
