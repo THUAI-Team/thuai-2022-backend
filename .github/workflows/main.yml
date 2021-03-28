@@ -93,7 +93,18 @@ jobs:
       
       - name: Build the executable
         shell: pwsh
-        run: ./build.ps1
+        run: |
+          mkdir ./bin
+          cd ./bin
+          $os=${{matrix.config.os}}
+          if ($os -contains 'windows') {
+            cmake .. -DCMAKE_CONFIGURATION_TYPES=Release
+          } else {
+            cmake .. -DCMAKE_BUILD_TYPE=Release
+          }
+          cmake --build . 
+          ls .
+          cd ..
 
       - name: Upload Windows release - Private
         if: matrix.config.os == 'windows-2019'
@@ -103,14 +114,15 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: eggs-windows-x86_64.exe
-          asset_path: ./bin/Debug/main.exe
+          asset_path: ./bin/Release/main.exe
           asset_content_type: application/octet-stream
+      
       - name: Upload Windows release - Public
         shell: pwsh
         if: matrix.config.os == 'windows-2019'
         run: |
           git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
-          cp ./bin/Debug/main.exe ./remote_repo/eggs-windows-x86_64
+          cp ./bin/Release/main.exe ./remote_repo/eggs-windows-x86_64
           cd ./remote_repo
           git config --global user.name "panda2134"
           git config --global user.email "ljypanda@live.com"
