@@ -101,7 +101,7 @@ jobs:
             echo "build on windows"
             cmake -DCMAKE_BUILD_TYPE=Release ..
             echo "generated project files. now build..."
-            cmake --config Release --target ALL_BUILD --build .
+            msbuild egg2021.sln /p:Configuration=Release
           } else {
             echo "build on *nix"
             cmake .. -DCMAKE_BUILD_TYPE=Release
