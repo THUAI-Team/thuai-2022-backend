@@ -98,8 +98,8 @@ jobs:
           cd ./bin
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
-            cmake  -G "Visual Studio 15 2017" -A x64 -DCMAKE_CONFIGURATION_TYPES=Release ..
-            cmake -DCMAKE_CONFIGURATION_TYPES=Release -G "Visual Studio 15 2017" -A x64 --build .
+            cmake  -G "Visual Studio 15 2017" -A x64 -T v140 -DCMAKE_CONFIGURATION_TYPES=Release ..
+            cmake -DCMAKE_CONFIGURATION_TYPES=Release -G "Visual Studio 15 2017" -A x64 -T v140 --build .
           } else {
             cmake .. -DCMAKE_BUILD_TYPE=Release
             cmake --build . 
