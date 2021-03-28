@@ -47,13 +47,17 @@ int main(void) {
   write_to_judger(init_config, -1);
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
-    std::cerr << "Current frame = " << cur_frame << std::endl;
     record.add_frame();
     if (!world->Update(FPS, velocityIterations, positionIterations)) {
       std::cerr << "Something Went Wrong!" << std::endl; // err occurs
     }
 
     int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
+
+    if (state >= 28) {
+      std::cerr << "Current frame = " << cur_frame << std::endl;
+    }
+
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
@@ -89,7 +93,9 @@ int main(void) {
         }
         if (incoming_msg["player"] >= 0) {
           auto detail = json::parse(std::string(incoming_msg["content"]));
-          std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
+          if (state >= 28) {
+            std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
+          }
           if (detail["state"] == state) { // ensure that state is synchronized
             received_info[incoming_msg["player"]] = true;
             // parse the action of AI: walking/stopped/running; which egg to try
