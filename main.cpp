@@ -19,6 +19,7 @@ int main(void) {
   json init_msg, config;
   read_from_judger(init_msg);
   if (init_msg["player_num"] != 3) {
+    std::cerr << "No enough player! Exiting...\n";
     return 1; // need 3 players
   }
   bool is_offline[] = {false, false, false};
@@ -26,6 +27,11 @@ int main(void) {
     if (init_msg["player_list"][i] == 0) {
       is_offline[i] = true;
     }
+  }
+
+  if (is_offline[0] && is_offline[1] && is_offline[2]) {
+    std::cerr << "All participants offline! Exiting...\n";
+    return 1;
   }
 
   Record record(FPS);
@@ -36,12 +42,12 @@ int main(void) {
   }
 
   auto init_config =
-      R"({"state": 0, "time": 3, "length": 4096})"_json; // TODO: time=0.1
+      R"({"state": 0, "time": 0.1, "length": 4096})"_json;
 
   write_to_judger(init_config, -1);
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
-    //std::cerr << "Current frame = " << cur_frame << std::endl;
+    std::cerr << "Current frame = " << cur_frame << std::endl;
     record.add_frame();
     if (!world->Update(FPS, velocityIterations, positionIterations)) {
       std::cerr << "Something Went Wrong!" << std::endl; // err occurs
@@ -51,7 +57,7 @@ int main(void) {
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
-      //std::cerr << "Now sending game state" << std::endl;
+      std::cerr << "Now sending game state" << std::endl;
       auto msg = world->output_to_ai(state);
       write_to_judger(
           json(
@@ -72,14 +78,16 @@ int main(void) {
                 }}}),
           -1);
       // wait for ai reply
-      //std::cerr << "Waiting for reply" << std::endl;
+      std::cerr << "Waiting for reply" << std::endl;
       bool round_end = false, received_info[] = {false, false, false};
       while (!round_end) {
         json incoming_msg;
+        std::cerr << "Waiting for next message...\n"; 
         read_from_judger(incoming_msg);
+        std::cerr << "Got incoming message: " << incoming_msg << std::endl;
         if (incoming_msg["player"] >= 0) {
           auto detail = json::parse(std::string(incoming_msg["content"]));
-          //std::cerr << "GOT DETAIL:" << detail << std::endl;
+          std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
           if (detail["state"] == state) { // ensure that state is synchronized
             received_info[incoming_msg["player"]] = true;
             // parse the action of AI: walking/stopped/running; which egg to try
@@ -89,7 +97,7 @@ int main(void) {
         } else {
           auto error_content =
               json::parse(std::string(incoming_msg["content"]));
-          //std::cerr << "ERROR:" << error_content << std::endl;
+          std::cerr << "Error from judger:" << error_content << std::endl;
           if (error_content["error"] == 0) {
             is_offline[error_content["player"]] = true; // 掉线了
           } else if (error_content["error"] == 1) {
@@ -100,6 +108,11 @@ int main(void) {
         round_end |= (received_info[0] || is_offline[0]) &&
                      (received_info[1] || is_offline[1]) &&
                      (received_info[2] || is_offline[2]);
+        std::cerr << "received_info:";
+        for (int i = 0; i < 3; i++) std::cerr << received_info[i] << " \n"[i == 2];
+        std::cerr << "is_offline:";
+        for (int i = 0; i < 3; i++) std::cerr << is_offline[i] << " \n"[i == 2];
+        std::cerr << "round_end = " << round_end << std::endl;
       }
     }
     for (int i = 0; i < PLAYER_COUNT; i++) {
