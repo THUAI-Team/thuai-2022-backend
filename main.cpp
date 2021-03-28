@@ -61,7 +61,7 @@ int main(void) {
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
-      std::cerr << "Now sending game state" << std::endl;
+      // std::cerr << "Now sending game state" << std::endl;
       auto msg = world->output_to_ai(state);
       write_to_judger(
           json(
@@ -80,22 +80,21 @@ int main(void) {
                            R"([{ "op": "add", "path": "/team", "value": 2 }])"_json)
                         .dump(),
                 }}}),
-          -1);
+          -1); 
       // wait for ai reply
-      std::cerr << "Waiting for reply" << std::endl;
+      // std::cerr << "Waiting for reply" << std::endl;
       bool round_end = false, received_info[] = {false, false, false};
       while (!round_end) {
         json incoming_msg;
-        std::cerr << "Waiting for next message...\n"; 
+        // std::cerr << "Waiting for next message...\n"; 
         read_from_judger(incoming_msg);
         if (state % 20 == 0) {
-          std::cerr << "Got incoming message: ###" << incoming_msg << "###" << std::endl;
+          // std::cerr << "Got incoming message: ###" << incoming_msg << "###" << std::endl;
         }
         if (incoming_msg["player"] >= 0) {
           auto detail = json::parse(std::string(incoming_msg["content"]));
-          if (state % 20 == 0) {
-            std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
-          }
+          // std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
+          
           if (detail["state"] == state) { // ensure that state is synchronized
             received_info[incoming_msg["player"]] = true;
             // parse the action of AI: walking/stopped/running; which egg to try
@@ -116,11 +115,11 @@ int main(void) {
         round_end |= (received_info[0] || is_offline[0]) &&
                      (received_info[1] || is_offline[1]) &&
                      (received_info[2] || is_offline[2]);
-        std::cerr << "received_info:";
-        for (int i = 0; i < 3; i++) std::cerr << received_info[i] << " \n"[i == 2];
-        std::cerr << "is_offline:";
-        for (int i = 0; i < 3; i++) std::cerr << is_offline[i] << " \n"[i == 2];
-        std::cerr << "round_end = " << round_end << std::endl;
+        // std::cerr << "received_info:";
+        // for (int i = 0; i < 3; i++) std::cerr << received_info[i] << " \n"[i == 2];
+        // std::cerr << "is_offline:";
+        // for (int i = 0; i < 3; i++) std::cerr << is_offline[i] << " \n"[i == 2];
+        // std::cerr << "round_end = " << round_end << std::endl;
       }
     }
     for (int i = 0; i < PLAYER_COUNT; i++) {
