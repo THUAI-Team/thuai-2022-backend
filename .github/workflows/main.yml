@@ -100,7 +100,7 @@ jobs:
           if ($os -like '*windows*') {
             echo "build on windows"
             cmake ..
-            echo "generated project files. now build..."
+            echo -DCMAKE_BUILD_TYPE=Release "generated project files. now build..."
             cmake --config Release --target ALL_BUILD --build .
           } else {
             echo "build on *nix"
