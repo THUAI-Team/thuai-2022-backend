@@ -171,14 +171,15 @@ jobs:
   docs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     runs-on: ubuntu-latest
+    needs: create_release
     name: Generate statements
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Compile statements with XeLaTeX
         uses: xu-cheng/latex-action@v2
-        working-directory: ./statements/
         with:
+          working_directory: ./statements/
           root_file: statements.tex
           latexmk_use_xelatex: true
 
