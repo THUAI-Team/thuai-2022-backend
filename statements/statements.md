@@ -10,6 +10,8 @@
 
 支持语言：C/C++、Python
 
+[题面下载](https://cdn.jsdelivr.net/gh/ssast-tech/thuai-egg-releases/statements.pdf)
+
 ## 参赛流程
 
 ### 加入小组

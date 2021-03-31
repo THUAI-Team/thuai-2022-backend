@@ -42,7 +42,8 @@ CMakeCache.txt
 cmake_install.cmake
 
 # TeX
-*.synctex
+*.synctex.gz
 *.aux
 *.dvi
-
+*.fdb_latexmk
+*.fls
