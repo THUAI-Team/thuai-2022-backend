@@ -167,11 +167,49 @@ jobs:
           git status
           git push
           while (! $?) { git pull; git push; }   
+  
+  docs:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    runs-on: ubuntu-latest
+    name: Generate statements
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Compile statements with XeLaTeX
+        uses: xu-cheng/latex-action@v2
+        working-directory: ./statements/
+        with:
+          root_file: statements.tex
+          latexmk_use_xelatex: true
+
+      - name: Upload statements - Private
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: statements.pdf
+          asset_path: ./statements/statements.pdf
+          asset_content_type: application/pdf
+
+      - name: Upload statements - Public
+        shell: pwsh
+        run: |
+          git clone https://${{secrets.PAT}}@github.com/ssast-tech/thuai-egg-releases ./remote_repo
+          cp ./statements/statements.pdf ./remote_repo/statements.pdf
+          cd ./remote_repo
+          git config --global user.name "panda2134"
+          git config --global user.email "ljypanda@live.com"
+          git add ./*
+          git commit -m "Update statements"
+          git status
+          git push
+          while (! $?) { git pull; git push; }  
 
   update_public_repo_tag:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     name: Tag the public release
-    needs: build
+    needs: [build, docs]
     runs-on: ubuntu-16.04
     steps:
       - name: Add SHORT_SHA env property with commit short sha
