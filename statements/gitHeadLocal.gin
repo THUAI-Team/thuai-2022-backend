@@ -1,0 +1,17 @@
+\usepackage[%
+        shash={07511ba},
+        lhash={07511ba970b03e8f524c45d33009a7c9b52a2074},
+        authname={panda2134},
+        authemail={ljypanda@live.com},
+        authsdate={2021-03-31},
+        authidate={2021-03-31 12:29:40 +0800},
+        authudate={1617164980},
+        commname={panda2134},
+        commemail={ljypanda@live.com},
+        commsdate={2021-03-31},
+        commidate={2021-03-31 12:29:40 +0800},
+        commudate={1617164980},
+        refnames={ (HEAD -> master)},
+        firsttagdescribe={9a247579-1-g07511ba-*},
+        reltag={07511ba-*}
+    ]{gitexinfo}
