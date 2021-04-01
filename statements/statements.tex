@@ -177,12 +177,11 @@ AI，可根据实际情况选择对应编译语言，编译成功后便可将 AI
 \hypertarget{header-n50}{%
 \subsubsection{本地测试}\label{header-n50}}
 
-我们提供了一个本地裁判程序 \texttt{./game/Judger/judger.py}
+我们提供了一个本地裁判程序（下面假设你把它放在\texttt{./game/Judger/judger.py}）
 用于评测两个本地 AI，具体使用方法为：在 \texttt{codes} 文件夹下输入命令：
 
 \begin{verbatim}
-$ python <judger.py位置> <启动游戏逻辑指令> <启动AI0指令> <启动AI1指令> <启动AI2指令> <配置信息>
-  <生成录像文件路径>
+$ python <judger.py位置> <启动游戏逻辑指令> <启动AI0指令> <启动AI1指令> <启动AI2指令> <生成录像文件路径>
 \end{verbatim}
 
 例如，游戏评测逻辑文件为 \texttt{./game/logic/main}，两个 AI 分别为
@@ -191,14 +190,13 @@ $ python <judger.py位置> <启动游戏逻辑指令> <启动AI0指令> <启动A
 
 \begin{verbatim}
 > python .\game\Judger\judger.py .\\game\\logic\\main.exe .\\example.exe \\game\\smartAI.exe
-  \\game\\smartAI.exe eggs replay.bin
+  \\game\\smartAI.exe replay.bin
 \end{verbatim}
 
 而在 Linux/Mac 下使用：
 
 \begin{verbatim}
-$ python ./game/Judger/judger.py ./game/logic/main ./example ./game/smartAI ./game/smartAI eggs
-  replay.bin
+$ python ./game/Judger/judger.py ./game/logic/main ./example ./game/smartAI ./game/smartAI replay.bin
 \end{verbatim}
 
 需要注意的是，以上均为\textbf{单行指令}，请不要在指令中输入回车。AI将使用C++编写。对局完成后，会将对局文件存入 \texttt{replay.bin} 。
