@@ -18,7 +18,6 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   create_release:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
     name: Create release
     runs-on: ubuntu-16.04
     # Note this. We are going to use that in further jobs.
@@ -39,7 +38,7 @@ jobs:
           prerelease: false
 
   build:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: "!contains(github.event.head_commit.message, 'cmake skip')"
     name: Build artifacts
     needs: create_release # we need to know the upload URL
     # The type of runner that the job will run on
@@ -169,7 +168,6 @@ jobs:
           while (! $?) { git pull; git push; }   
   
   docs:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
     runs-on: ubuntu-latest
     needs: create_release
     name: Generate statements
@@ -208,7 +206,6 @@ jobs:
           while (! $?) { git pull; git push; }  
 
   update_public_repo_tag:
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
     name: Tag the public release
     needs: [build, docs]
     runs-on: ubuntu-16.04
