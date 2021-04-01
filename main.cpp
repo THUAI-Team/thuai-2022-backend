@@ -83,7 +83,8 @@ int main(void) {
           -1); 
       // wait for ai reply
       // std::cerr << "Waiting for reply" << std::endl;
-      bool round_end = false, received_info[] = {false, false, false};
+      bool round_end = is_offline[0] && is_offline[1] && is_offline[2],
+        received_info[] = {false, false, false};
       while (!round_end) {
         json incoming_msg;
         // std::cerr << "Waiting for next message...\n"; 
