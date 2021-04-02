@@ -1,3 +1,7 @@
+27c27
+< #include <math.h>
+---
+> #include <cmath>
 32c32
 < 	return isfinite(x);
 ---
