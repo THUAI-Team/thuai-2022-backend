@@ -1,0 +1,4 @@
+32c32
+< 	return isfinite(x);
+---
+> 	return std::isfinite(x);
