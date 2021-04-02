@@ -47,8 +47,8 @@ jobs:
       matrix:
         config:
           - os: ubuntu-16.04
-          - os: macos-10.15
-          - os: windows-2019
+          # - os: macos-10.15
+          # - os: windows-2019
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -94,6 +94,9 @@ jobs:
       - name: Add msbuild to PATH
         if: matrix.config.os == 'windows-2019'
         uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Build the executable
         shell: pwsh
