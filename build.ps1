@@ -3,5 +3,5 @@
 mkdir $PSScriptRoot/bin
 Set-Location $PSScriptRoot/bin
 
-cmake $PSScriptRoot
+cmake -DLOCAL=ON $PSScriptRoot
 cmake --build . 

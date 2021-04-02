@@ -16,6 +16,12 @@ using namespace thuai;
 constexpr const int FPS = 60, FRAME_COUNT = FPS * 120, FRAMES_PER_STATE = 6;
 const int32 velocityIterations = 10, positionIterations = 8;
 int main(void) {
+  std::cerr << "Judger logic starting...\n";
+#ifdef LOCAL
+  std::cerr << "Local debugging mode\n";
+#else
+  std::cerr << "Online judging mode\n";
+#endif
   json init_msg, config;
   read_from_judger(init_msg);
   if (init_msg["player_num"] != 3) {
@@ -41,10 +47,18 @@ int main(void) {
     record.init_egg_score(*(world->eggs[i]));
   }
 
+#ifdef LOCAL
+  // for debugging, time=10s, however on real platforms, time=0.1s
+  auto init_config =
+      R"({"state": 0, "time": 10, "length": 4096})"_json; // TODO: TIME LIMIT
+#else
   auto init_config =
       R"({"state": 0, "time": 0.1, "length": 4096})"_json; // TODO: TIME LIMIT
+#endif
 
   write_to_judger(init_config, -1);
+  
+  std::cerr << "Judger logic started.\n";
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
     record.add_frame();

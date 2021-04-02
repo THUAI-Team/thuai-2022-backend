@@ -8,6 +8,12 @@ project(egg2021)
 
 message("Now building on:${CMAKE_SYSTEM_NAME}")
 
+OPTION(LOCAL "local test mode" ON)
+if(LOCAL)
+	message("local test mode is on!")
+	add_definitions(-DLOCAL=1)
+endif()
+
 # strange bug on windows
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
   set(unofficial-box2d_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x64-windows/share/unofficial-box2d")
