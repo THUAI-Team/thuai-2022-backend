@@ -94,9 +94,6 @@ jobs:
         if: matrix.config.os == 'windows-2019'
         uses: microsoft/setup-msbuild@v1.0.2
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Build the executable
         shell: pwsh
         run: |
