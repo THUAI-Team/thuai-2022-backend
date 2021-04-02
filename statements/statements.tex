@@ -11,6 +11,7 @@
 \usepackage[local]{gitinfo2}
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage{siunitx}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
@@ -51,6 +52,7 @@
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 \usepackage[margin=1.5cm]{geometry}
+\usepackage{fontspec}
 \lstset{basicstyle=\ttfamily,breaklines=true}
 
 \title{“巧取智夺”赛道游戏细则}
@@ -177,29 +179,35 @@ AI，可根据实际情况选择对应编译语言，编译成功后便可将 AI
 \hypertarget{header-n50}{%
 \subsubsection{本地测试}\label{header-n50}}
 
-我们提供了一个本地裁判程序（下面假设你把它放在\texttt{./game/Judger/judger.py}）
-用于评测两个本地 AI，具体使用方法为：在 \texttt{codes} 文件夹下输入命令：
+我们提供了一个本地裁判程序（下面假设你把它放在\texttt{./judger.py}）
+用于评测两个本地 AI，具体使用方法为：
 
-\begin{verbatim}
-$ python <judger.py位置> <启动游戏逻辑指令> <启动AI0指令> <启动AI1指令> <启动AI2指令> <生成录像文件路径>
-\end{verbatim}
+\begin{enumerate}
 
-例如，游戏评测逻辑文件为 \texttt{./game/logic/main}，两个 AI 分别为
-\texttt{./example} 和 \texttt{./game/smartAI}。可在 Windows
-下使用如下指令：
+\item 下载裁判程序、游戏逻辑（假设命名为\texttt{eggs}），放在SDK根目录。
+\item 我们假设你采用Python SDK，且当前命令行在 \texttt{main.py} 所在目录。执行下列命令，进入调试模式：
 
-\begin{verbatim}
-> python .\game\Judger\judger.py .\\game\\logic\\main.exe .\\example.exe \\game\\smartAI.exe
-  \\game\\smartAI.exe replay.bin
-\end{verbatim}
+\begin{lstlisting}[language=bash]
+$ python ./judger.py test_mode
+\end{lstlisting}
+进入调试模式后界面如下：
+\begin{lstlisting}
+You can input help to know the instrution set
+> 
+\end{lstlisting}
 
-而在 Linux/Mac 下使用：
+\item 在调试模式依次逐行输入下列语句，以使用\texttt{main.py}中的AI分别控制3个队伍，运行一次测试：
+\begin{lstlisting}
+0 0 python+main.py
+0 1 python+main.py
+0 2 python+main.py
+4 eggs dummyConfig replay.bin
+\end{lstlisting}
+\end{enumerate}
 
-\begin{verbatim}
-$ python ./game/Judger/judger.py ./game/logic/main ./example ./game/smartAI ./game/smartAI replay.bin
-\end{verbatim}
+对局完成后，会将对局文件存入 \texttt{replay.bin} 。
 
-需要注意的是，以上均为\textbf{单行指令}，请不要在指令中输入回车。AI将使用C++编写。对局完成后，会将对局文件存入 \texttt{replay.bin} 。
+注意：请确保本地执行 \texttt{python} 命令呼出的是 \textsc{Python 3}.
 
 \hypertarget{header-n58}{%
 \subsubsection{评测逻辑文件下载}\label{header-n58}}
@@ -207,4 +215,6 @@ $ python ./game/Judger/judger.py ./game/logic/main ./example ./game/smartAI ./ga
 出于安全考虑，评测逻辑只提供构建好的版本。\par 请在
 \url{https://github.com/ssast-tech/thuai-egg-releases}
 进行下载，或者直接采用「下载游戏包」页面的链接。
+
+请注意：考虑到选手电脑的性能问题，我们在用于本地评测的逻辑中放宽了时间限制；实际在Saiblo评测时，单次\texttt{update}的时间限制是 \SI{0.1}{\second}. 如果任何一个回合超出这个限制，对应的AI都会被立刻结束进程。
 \end{document}
