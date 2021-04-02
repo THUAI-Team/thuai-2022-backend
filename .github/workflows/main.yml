@@ -97,7 +97,13 @@ jobs:
       - name: Build the executable
         shell: pwsh
         run: |
-          mkdir ./bin
+         if ($os -like '*ubuntu*') {
+           echo "applying patch..."
+           ls -al ./tools/vcpkg/installed
+           patch ./tools/vcpkg/installed/x64-linux/include/box2d/b2_math.h ./tools/b2_math.patch
+           echo "patch applied"
+         }
+         mkdir ./bin
           cd ./bin
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
@@ -107,11 +113,6 @@ jobs:
             msbuild egg2021.sln /p:Configuration=Release
           } else {
             echo "build on *nix"
-            if ($os -like '*ubuntu*') {
-              echo "applying patch..."
-              patch ../tools/vcpkg/installed/x64-linux/include/box2d/b2_math.h ../tools/b2_math.patch
-              echo "patch applied"
-            }
             cmake .. -DCMAKE_BUILD_TYPE=Release
             cmake --build . 
           }
