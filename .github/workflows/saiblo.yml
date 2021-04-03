@@ -1,0 +1,77 @@
+name: build for saiblo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create_release:
+    name: Create release
+    runs-on: ubuntu-16.04
+    # Note this. We are going to use that in further jobs.
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        with:
+          release_name: ${{ env.SHORT_SHA }}-saiblo
+          tag_name: ${{ env.SHORT_SHA }}
+          draft: false
+          prerelease: false
+  build:
+    name: Build artifacts
+    needs: create_release # we need to know the upload URL
+    runs-on: ubuntu-16.04
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Get CMake
+        uses: lukka/get-cmake@v3.19.2
+
+      - name: Get RandR Lib for Ubuntu
+        run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
+
+      - name: Install vcpkg on unix-like systems
+        working-directory: ./tools/vcpkg
+        timeout-minutes: 10
+        run: |
+          ls -al
+          ./bootstrap-vcpkg.sh
+          ./vcpkg integrate install
+          ./vcpkg install box2d
+
+      - name: Swith to clang++ on Ubuntu
+        run: |
+          sudo apt-get install clang
+          sudo update-alternatives --set cc `which clang`
+          sudo update-alternatives --set c++ `which clang++`
+
+      - name: Build the executable
+        shell: pwsh
+        run: |
+          echo "applying patch..."
+          ls -al ./tools/vcpkg/installed
+          patch ./tools/vcpkg/installed/x64-linux/include/box2d/b2_math.h ./tools/b2_math.patch
+          echo "patch applied"
+          mkdir ./bin
+          cd ./bin
+          echo "build on *nix"
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DLOCAL=OFF 
+          cmake --build . 
+    
+      - name: Upload unix-like releases - Private
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: eggs-saiblo
+          asset_path: ./bin/main
+          asset_content_type: application/octet-stream
