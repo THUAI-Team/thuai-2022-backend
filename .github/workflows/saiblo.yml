@@ -20,7 +20,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
         with:
           release_name: ${{ env.SHORT_SHA }}-saiblo
-          tag_name: ${{ env.SHORT_SHA }}
+          tag_name: ${{ env.SHORT_SHA }}-saiblo
           draft: false
           prerelease: false
   build:
