@@ -384,14 +384,25 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
       }
       // reduce player's velocity if distance satisfies part II
       if (isSpeedDown) {
+        auto current_velocity_normalized =
+            Vec2D{b2currentPlayer->GetLinearVelocity().x,
+                  b2currentPlayer->GetLinearVelocity().y}
+                .normalized(); // current direction
+
+
+        float current_velocity_norm =
+            std::min(SPEED_ON_SPEED_REDUCE,
+                     double(sqrt(b2currentPlayer->GetLinearVelocity().x *
+                                     b2currentPlayer->GetLinearVelocity().x +
+                                 b2currentPlayer->GetLinearVelocity().y *
+                                     b2currentPlayer->GetLinearVelocity()
+                                         .y)));  // make sure the volocity leq 0.5
+
         b2currentPlayer->SetLinearVelocity(
-            {static_cast<float>(std::min(
-                 currentPlayer->facing().x * SPEED_ON_SPEED_REDUCE,
-                 static_cast<double>(b2currentPlayer->GetLinearVelocity().x))),
-             static_cast<float>(
-                 std::min(currentPlayer->facing().y * SPEED_ON_SPEED_REDUCE,
-                          static_cast<double>(
-                              b2currentPlayer->GetLinearVelocity().y)))});
+            {static_cast<float>(current_velocity_norm *
+                                current_velocity_normalized.x),
+             static_cast<float>(current_velocity_norm *
+                                current_velocity_normalized.y)});
       }
 
     } // Player update ends
