@@ -352,7 +352,7 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
           player_distance_to_origin >= INNER_SPEED_REDUCE_RADIUS)
         isSpeedDown = true;
       if (currentPlayer->status() == PlayerStatus::RUNNING) {
-        if (currentPlayer->endurance() > 4.0f / static_cast<float>(FPS)) {
+        if (currentPlayer->endurance() > 4.0f / static_cast<float>(FPS) && currentPlayer->egg()==-1) {
           currentPlayer->set_endurance(currentPlayer->endurance() -
                                        4.0f / static_cast<float>(FPS));
           b2currentPlayer->SetLinearVelocity(
