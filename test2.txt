@@ -1,0 +1,4 @@
+0 0 python+../debug/test/main.py
+0 1 python+../debug/test/main.py
+0 2 python+../debug/test/main.py
+4 bin/main dummyConfig out.bin
