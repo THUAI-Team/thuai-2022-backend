@@ -17,7 +17,9 @@ constexpr const int FPS = 60, FRAME_COUNT = FPS * 120, FRAMES_PER_STATE = 6;
 
 const int32 velocityIterations = 10, positionIterations = 8;
 int main(int argc, char **argv) {
+  const bool verbose = std::string(argv[0]).find("verbose") != std::string::npos;
   std::cerr << "Judger logic starting...\n";
+  std::cerr << "Verbose mode is " << (verbose ? "on" : "off") << std::endl;
 #ifdef LOCAL
   std::cerr << "Local debugging mode\n";
 #else
@@ -72,12 +74,17 @@ int main(int argc, char **argv) {
       std::cerr << "Something Went Wrong! Logic Crashed."
                 << std::endl;  // err occurs
     }
-    std::cerr << "Current frame = " << cur_frame << std::endl;
+    if (verbose) {
+      std::cerr << "Current frame = " << cur_frame << std::endl;
+    }
  
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
-      std::cerr << "Now sending game state" << std::endl;
+
+      if (verbose) {
+        std::cerr << "Now sending game state" << std::endl;
+      }
       auto msg = world->output_to_ai(state);
       write_to_judger(
           json(
@@ -103,15 +110,19 @@ int main(int argc, char **argv) {
         received_info[] = {false, false, false};
       while (!round_end) {
         json incoming_msg;
-        std::cerr << "Waiting for next message...\n"; 
+        if (verbose) {
+          std::cerr << "Waiting for next message...\n"; 
+        }
         read_from_judger(incoming_msg);
-        // if (state % 20 == 0) {
+        if (verbose) {
           std::cerr << "Got incoming message: ###" << incoming_msg << "###" << std::endl;
-        // }
+        }
         if (incoming_msg["player"] >= 0) {
           auto detail = json::parse(std::string(incoming_msg["content"]));
-          std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
-          
+
+          if (verbose) {
+            std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
+          } 
           if (detail["state"] == state && !received_info[incoming_msg["player"]]) { 
             // ensure that state is synchronized, and this reply comes before "timeout" directive
             received_info[incoming_msg["player"]] = true;
@@ -132,13 +143,17 @@ int main(int argc, char **argv) {
         round_end |= (received_info[0] || is_offline[0]) &&
                      (received_info[1] || is_offline[1]) &&
                      (received_info[2] || is_offline[2]);
-        std::cerr << "received_info:";
-        for (int i = 0; i < 3; i++) std::cerr << received_info[i] << " \n"[i == 2];
-        std::cerr << "is_offline:";
-        for (int i = 0; i < 3; i++) std::cerr << is_offline[i] << " \n"[i == 2];
-        std::cerr << "round_end = " << round_end << std::endl;
+        if (verbose) {
+          std::cerr << "received_info:";
+          for (int i = 0; i < 3; i++) std::cerr << received_info[i] << " \n"[i == 2];
+          std::cerr << "is_offline:";
+          for (int i = 0; i < 3; i++) std::cerr << is_offline[i] << " \n"[i == 2];
+          std::cerr << "round_end = " << round_end << std::endl;
+        }
       }
-      std::cerr << "auxiliary:" << aux_state << std::endl;
+      if (verbose) {
+        std::cerr << "auxiliary:" << aux_state << std::endl;
+      }
       write_to_judger(json({{"state", aux_state},
                             {"listen", json::array()},
                             {"player", json::array()},
