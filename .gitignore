@@ -47,3 +47,4 @@ cmake_install.cmake
 *.dvi
 *.fdb_latexmk
 *.fls
+statements/statements.log
