@@ -14,6 +14,7 @@ using json = nlohmann::json;
 using namespace thuai;
 
 constexpr const int FPS = 60, FRAME_COUNT = FPS * 120, FRAMES_PER_STATE = 6;
+
 const int32 velocityIterations = 10, positionIterations = 8;
 int main(void) {
   std::cerr << "Judger logic starting...\n";
@@ -62,16 +63,19 @@ int main(void) {
 
   for (int cur_frame = 0; cur_frame < FRAME_COUNT; ++cur_frame) {
     record.add_frame();
+
+
+    int state = cur_frame / FRAMES_PER_STATE * 2 + 1; // ensure that cur_state > 0
+    int assist_state = cur_frame / FRAMES_PER_STATE * 2;
+
     if (!world->Update(FPS, velocityIterations, positionIterations)) {
-      std::cerr << "Something Went Wrong!" << std::endl; // err occurs
+      std::cerr << "Something Went Wrong! Logic Crashed."
+                << std::endl;  // err occurs
     }
-
-    int state = cur_frame / FRAMES_PER_STATE + 1; // ensure that cur_state > 0
-
     // if (state % 20 == 0) {
     //   std::cerr << "Current frame = " << cur_frame << std::endl;
     // }
-
+ 
     if (cur_frame % FRAMES_PER_STATE == 0) {
       // handle the interaction every 0.1s
       // send game state first
@@ -136,6 +140,11 @@ int main(void) {
         // for (int i = 0; i < 3; i++) std::cerr << is_offline[i] << " \n"[i == 2];
         // std::cerr << "round_end = " << round_end << std::endl;
       }
+      write_to_judger(json({{"state", assist_state},
+                            {"listen", {}},
+                            {"player", {0,1,2}},
+                            {"content", {"","",""}}}),
+                      -1);  // into assist state
     }
     for (int i = 0; i < PLAYER_COUNT; i++) {
       record.set_player_in_frame(*(world->players[i]));
