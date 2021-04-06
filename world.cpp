@@ -267,7 +267,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
     if (!player_action["grab"].is_null()) {
       const int egg_target = static_cast<int>(player_action["grab"]);
 
-      if (egg_target > 0 && egg_target < EGG_COUNT &&
+      if (egg_target >= 0 && egg_target < EGG_COUNT &&
           egg_target != players[player_id]->egg()) {
         //  make sure only the nearest player grab the egg
         Vec2D pos_of_player = {b2players[player_id]->GetPosition().x,
