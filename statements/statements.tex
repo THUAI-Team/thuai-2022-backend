@@ -216,5 +216,9 @@ You can input help to know the instrution set
 \url{https://github.com/ssast-tech/thuai-egg-releases}
 进行下载，或者直接采用「下载游戏包」页面的链接。
 
-请注意：考虑到选手电脑的性能问题，我们在用于本地评测的逻辑中放宽了时间限制；实际在Saiblo评测时，单次\texttt{update}的时间限制是 \SI{0.1}{\second}. 如果任何一个回合超出这个限制，对应的AI都会被立刻结束进程。
+请注意：考虑到选手电脑的性能问题，我们在用于本地评测的逻辑中放宽了时间限制；实际在Saiblo评测时，单次\texttt{update}的时间限制是 \SI{0.1}{\second}. 
+如果任何一个回合超出这个限制，对应的AI\color{red}此回合的回复会被抛弃\color{black}，但是你的AI\color{red}仍然可以参与后续回合的交互\color{black}。
+
+关于 AI 调试：如果你想要看到更多来自游戏逻辑的调试信息，只需要重命名逻辑文件名使得其包含 \texttt{verbose} 这一字符串即可。
+你可能需要对上述调试模式输入语句的最后一行做适当更改，以匹配重命名后的逻辑文件名。
 \end{document}
