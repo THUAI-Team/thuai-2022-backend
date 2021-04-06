@@ -7,5 +7,6 @@
     "istream": "cpp",
     "vector": "cpp",
     "memory": "cpp"
-  }
+  },
+  "python.pythonPath": "/Users/panda2134/.pyenv/versions/3.8.5/bin/python"
 }
