@@ -65,6 +65,7 @@ jobs:
         run: |
           ls -al
           ./bootstrap-vcpkg.sh
+          ./vcpkg update
           ./vcpkg integrate install
           ./vcpkg install box2d
       
@@ -75,6 +76,7 @@ jobs:
         working-directory: .\tools\vcpkg
         run: |
           .\bootstrap-vcpkg.bat
+          .\vcpkg update
           .\vcpkg integrate install
           .\vcpkg install box2d:x64-windows
       
