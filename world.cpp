@@ -13,29 +13,29 @@
 #include "nlohmann/json.hpp"
 
 namespace thuai {
-std::map<Player *, int> slip_players_list;
+std::map<Player*, int> slip_players_list;
 
 typedef struct b2bodydata {
-  Player *m_p_player{nullptr};
-  Egg *m_p_egg{nullptr};
-  b2Body *m_p_b2body{nullptr};
-  b2bodydata(Player *_player, b2Body *_b2body)
+  Player* m_p_player{nullptr};
+  Egg* m_p_egg{nullptr};
+  b2Body* m_p_b2body{nullptr};
+  b2bodydata(Player* _player, b2Body* _b2body)
       : m_p_player(_player), m_p_b2body(_b2body) {}
-  b2bodydata(Egg *_egg, b2Body *_b2body) : m_p_egg(_egg), m_p_b2body(_b2body) {}
+  b2bodydata(Egg* _egg, b2Body* _b2body) : m_p_egg(_egg), m_p_b2body(_b2body) {}
 } b2bodydata;
-void World::ContactListener::BeginContact(b2Contact *contact) {
+void World::ContactListener::BeginContact(b2Contact* contact) {
   // Before collision, modified if needed
   return;
 }
 
-void World::ContactListener::EndContact(b2Contact *contact) {
+void World::ContactListener::EndContact(b2Contact* contact) {
   // After collision
-  std::vector<b2Body *> collision_items;
+  std::vector<b2Body*> collision_items;
   collision_items.push_back(contact->GetFixtureA()->GetBody());
   collision_items.push_back(contact->GetFixtureB()->GetBody());
 
   for (auto item : collision_items) {
-    auto body_data = static_cast<b2bodydata *>(item->GetUserData());
+    auto body_data = static_cast<b2bodydata*>(item->GetUserData());
     if (body_data != nullptr && body_data->m_p_player != nullptr) {
       body_data->m_p_b2body->SetLinearVelocity({.0, .0});
       body_data->m_p_player->set_status(PlayerStatus::SLIPPED);
@@ -47,22 +47,22 @@ void World::ContactListener::EndContact(b2Contact *contact) {
 double get_walk_speed_with_egg(double egg_score) {
   return 3 - pow(1.07, egg_score - 10);
 }
-double get_distance(const Vec2D &pos1, const Vec2D &pos2) {
+double get_distance(const Vec2D& pos1, const Vec2D& pos2) {
   return sqrt((pos1.x - pos2.x) * (pos1.x - pos2.x) +
               (pos1.y - pos2.y) * (pos1.y - pos2.y));
 }
-double get_distance(const b2Body *const obj1, const b2Body *const obj2) {
+double get_distance(const b2Body* const obj1, const b2Body* const obj2) {
   return sqrt((obj1->GetPosition().x - obj2->GetPosition().x) *
                   (obj1->GetPosition().x - obj2->GetPosition().x) +
               (obj1->GetPosition().y - obj2->GetPosition().y) *
                   (obj1->GetPosition().y - obj2->GetPosition().y));
 }
-double get_distance(const b2Body *const obj1, const Vec2D &pos2) {
+double get_distance(const b2Body* const obj1, const Vec2D& pos2) {
   return sqrt(
       (obj1->GetPosition().x - pos2.x) * (obj1->GetPosition().x - pos2.x) +
       (obj1->GetPosition().y - pos2.y) * (obj1->GetPosition().y - pos2.y));
 }
-double get_distance(const Vec2D &pos1, const b2Body *const obj2) {
+double get_distance(const Vec2D& pos1, const b2Body* const obj2) {
   return sqrt(
       (pos1.x - obj2->GetPosition().x) * (pos1.x - obj2->GetPosition().x) +
       (pos1.y - obj2->GetPosition().y) * (pos1.y - obj2->GetPosition().y));
@@ -89,8 +89,8 @@ World::World() {
       const double egg_radius_delta = DIAMETER / 12;
       for (int k = 1; k <= 5; k++, egg_id++) {
         double egg_radius = egg_radius_delta * k;
-        int score =
-            int(mtgen() * 10.0 / std::mt19937::max() + 10.0); // score: [10, 20)
+        int score = int(mtgen() * 10.0 / std::mt19937::max() +
+                        10.0);  // score: [10, 20)
         eggs[egg_id] = new Egg(egg_id, score);
         eggs[egg_id]->set_position(
             {egg_radius * cos(angle), egg_radius * sin(angle)});
@@ -100,61 +100,63 @@ World::World() {
   // ========== Box2d Related ==========
   {
     // Initialize b2World
-    b2world = new b2World(b2Vec2(0, 0)); // Set gravity to 0.0
+    b2world = new b2World(b2Vec2(0, 0));  // Set gravity to 0.0
     this->m_contactlistener = new ContactListener();
     b2world->SetContactListener(m_contactlistener);
     b2BodyDef groundBodyDef;
     int vertex_count = 0;
     b2Vec2 ve[360];
-    const float half_angel_of_per_goal = asin(float(GOAL_LENGTH) / float(DIAMETER)); // caution of int / int !!!
+    const float half_angel_of_per_goal =
+        asin(float(GOAL_LENGTH) / float(DIAMETER));  // caution of int / int !!!
     for (int i = 0; i < 360;
-         i++) { // use degree not rad to create bound here for smoother egde
-      for (int k = 0; k < 3; k++) // three goals
+         i++) {  // use degree not rad to create bound here for smoother egde
+      for (int k = 0; k < 3; k++)  // three goals
         if (i > 60 + 120 * k - ceil(half_angel_of_per_goal / pi * 180) &&
             i < 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180)) {
           // goal's inner edge vertex is at 45.522 74.478 (degree), so on the
           // circle vertex at 45 and 75 is needed , 46 and 74 is not the asin's
           // value is 14.4775
-          ve[vertex_count++].Set(
-            (DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 - half_angel_of_per_goal),
-            (DIAMETER / 2) *
-              sin((1 + 2 * k) * pi / 3 - half_angel_of_per_goal));
+          ve[vertex_count++].Set((DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 -
+                                                      half_angel_of_per_goal),
+                                 (DIAMETER / 2) * sin((1 + 2 * k) * pi / 3 -
+                                                      half_angel_of_per_goal));
 
           ve[vertex_count++].Set((DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 -
                                                       half_angel_of_per_goal) +
-                                   GOAL_WIDTH * cos((1 + 2 * k) * pi / 3),
+                                     GOAL_WIDTH * cos((1 + 2 * k) * pi / 3),
                                  (DIAMETER / 2) * sin((1 + 2 * k) * pi / 3 -
                                                       half_angel_of_per_goal) +
-                                   GOAL_WIDTH * sin((1 + 2 * k) * pi / 3));
+                                     GOAL_WIDTH * sin((1 + 2 * k) * pi / 3));
 
           ve[vertex_count++].Set((DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 +
                                                       half_angel_of_per_goal) +
-                                   GOAL_WIDTH * cos((1 + 2 * k) * pi / 3),
+                                     GOAL_WIDTH * cos((1 + 2 * k) * pi / 3),
                                  (DIAMETER / 2) * sin((1 + 2 * k) * pi / 3 +
                                                       half_angel_of_per_goal) +
-                                   GOAL_WIDTH * sin((1 + 2 * k) * pi / 3));
+                                     GOAL_WIDTH * sin((1 + 2 * k) * pi / 3));
 
-          ve[vertex_count++].Set(
-            (DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 + half_angel_of_per_goal),
-            (DIAMETER / 2) *
-              sin((1 + 2 * k) * pi / 3 + half_angel_of_per_goal));
+          ve[vertex_count++].Set((DIAMETER / 2) * cos((1 + 2 * k) * pi / 3 +
+                                                      half_angel_of_per_goal),
+                                 (DIAMETER / 2) * sin((1 + 2 * k) * pi / 3 +
+                                                      half_angel_of_per_goal));
 
           i = 60 + 120 * k + ceil(half_angel_of_per_goal / pi * 180.);
           break;
         }
-      ve[vertex_count++].Set((DIAMETER / 2) * cos(i / 180. * pi),
-                             (DIAMETER / 2) *
-                               sin(i / 180. * pi)); // vertex to create a circle
+      ve[vertex_count++].Set(
+          (DIAMETER / 2) * cos(i / 180. * pi),
+          (DIAMETER / 2) * sin(i / 180. * pi));  // vertex to create a circle
     }
 
-    std::reverse(ve, ve+vertex_count); // to ensure that normal vector is on the correct side
+    std::reverse(ve, ve + vertex_count);  // to ensure that normal vector is on
+                                          // the correct side
 
     groundBodyDef.position.Set(.0f, .0f);
-    b2Body *groundBody = b2world->CreateBody(&groundBodyDef);
+    b2Body* groundBody = b2world->CreateBody(&groundBodyDef);
 
     b2ChainShape groundChain;
     groundChain.CreateLoop(ve, vertex_count);
-    
+
     // finish the goal region
 
     groundBody->CreateFixture(&groundChain, .0f);
@@ -198,26 +200,26 @@ World::~World() {
 
 void World::read_from_team_action(Team team, nlohmann::json detail) {
   std::map<int, std::pair<int, double>>
-      grab_list; // {eggindex: (currentNearestPlayer,currentNearestDistance)}
-                // only eggs on the ground
+      grab_list;  // {eggindex: (currentNearestPlayer,currentNearestDistance)}
+                  // only eggs on the ground
   std::map<int, std::pair<int, double>>
-      grab_from_player_list; // {**PLAYERINDEX**:
-                          // (currentNearestPlayer,currentNearestDistance)}
-                          // only eggs on other players
+      grab_from_player_list;  // {**PLAYERINDEX**:
+                              // (currentNearestPlayer,currentNearestDistance)}
+                              // only eggs on other players
   for (int i = 0; i < 4; i++) {
     auto player_action = detail["actions"][i];
     int player_id = i + int(team) * 4;
     auto current_player = players[player_id];
 
     if (current_player->status() == SLIPPED) {
-      continue; // when slipped, a player cannot do anything
+      continue;  // when slipped, a player cannot do anything
     }
 
     //--------- handle movement ---------
     if (player_action["action"] == "running" &&
         (players[player_id]->endurance() <= 0 ||
          players[player_id]->egg() != -1)) {
-      player_action["action"] = "walking"; // unify all cases of walking
+      player_action["action"] = "walking";  // unify all cases of walking
     }
 
     Vec2D facing;
@@ -247,12 +249,15 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
         }
       }
       for (auto player : b2players) {
-        if (fabs(player->GetPosition().x - this->players[player_id]->position().x) < 1e-5
-         && fabs(player->GetPosition().y - this->players[player_id]->position().y) < 1e-5) {
-            continue;
+        if (fabs(player->GetPosition().x -
+                 this->players[player_id]->position().x) < 1e-5 &&
+            fabs(player->GetPosition().y -
+                 this->players[player_id]->position().y) < 1e-5) {
+          continue;
         }
 
-        if (get_distance(player, pos_to_be_placed) <= EGG_RADIUS + PLAYER_RADIUS) {
+        if (get_distance(player, pos_to_be_placed) <=
+            EGG_RADIUS + PLAYER_RADIUS) {
           can_be_placed = false;
           break;
         }
@@ -279,9 +284,10 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
             if (players[i]->egg() == egg_target) {
               auto dis = get_distance(pos_of_player, b2players[i]);
               if (dis <= EGG_RADIUS + MIN_GRAB_DIS) {
-                if (grab_from_player_list.find(i) == grab_from_player_list.end() 
-                  || grab_from_player_list[i].second > dis) {
-                    grab_from_player_list[i] = std::make_pair(player_id, dis);
+                if (grab_from_player_list.find(i) ==
+                        grab_from_player_list.end() ||
+                    grab_from_player_list[i].second > dis) {
+                  grab_from_player_list[i] = std::make_pair(player_id, dis);
                 }
               }
               break;
@@ -291,7 +297,8 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
           // the egg is on the ground
           auto dis = get_distance(b2eggs[egg_target], pos_of_player);
           if (dis <= EGG_RADIUS + MIN_GRAB_DIS) {
-            if (grab_list.find(egg_target) == grab_list.end() || grab_list[egg_target].second > dis) {
+            if (grab_list.find(egg_target) == grab_list.end() ||
+                grab_list[egg_target].second > dis) {
               grab_list[egg_target] = std::make_pair(player_id, dis);
             }
           }
@@ -336,7 +343,8 @@ void thuai::World::addEgg(int index) {
   b2eggs[index]->SetMassData(&massdata);
 }
 
-bool thuai::World::Update(int FPS, int32 velocityIterations,
+bool thuai::World::Update(int FPS,
+                          int32 velocityIterations,
                           int32 positionIterations) {
   try {
     static const float timestep = 1.0f / static_cast<float>(FPS);
@@ -345,14 +353,15 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
       auto currentPlayer = players[i];
       auto b2currentPlayer = b2players[i];
       bool isSpeedDown = false;
-      
+
       // reduce player's velocity if distance satisfies part I
       double player_distance_to_origin = get_distance(b2currentPlayer, {0, 0});
       if (player_distance_to_origin <= OUTER_SPEED_REDUCE_RADIUS &&
           player_distance_to_origin >= INNER_SPEED_REDUCE_RADIUS)
         isSpeedDown = true;
       if (currentPlayer->status() == PlayerStatus::RUNNING) {
-        if (currentPlayer->endurance() > 4.0f / static_cast<float>(FPS) && currentPlayer->egg()==-1) {
+        if (currentPlayer->endurance() > 4.0f / static_cast<float>(FPS) &&
+            currentPlayer->egg() == -1) {
           currentPlayer->set_endurance(currentPlayer->endurance() -
                                        4.0f / static_cast<float>(FPS));
           b2currentPlayer->SetLinearVelocity(
@@ -387,16 +396,15 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
         auto current_velocity_normalized =
             Vec2D{b2currentPlayer->GetLinearVelocity().x,
                   b2currentPlayer->GetLinearVelocity().y}
-                .normalized(); // current direction
+                .normalized();  // current direction
 
-
-        float current_velocity_norm =
-            std::min(SPEED_ON_SPEED_REDUCE,
-                     double(sqrt(b2currentPlayer->GetLinearVelocity().x *
-                                     b2currentPlayer->GetLinearVelocity().x +
-                                 b2currentPlayer->GetLinearVelocity().y *
-                                     b2currentPlayer->GetLinearVelocity()
-                                         .y)));  // make sure the volocity leq 0.5
+        float current_velocity_norm = std::min(
+            SPEED_ON_SPEED_REDUCE,
+            double(sqrt(b2currentPlayer->GetLinearVelocity().x *
+                            b2currentPlayer->GetLinearVelocity().x +
+                        b2currentPlayer->GetLinearVelocity().y *
+                            b2currentPlayer->GetLinearVelocity()
+                                .y)));  // make sure the volocity leq 0.5
 
         b2currentPlayer->SetLinearVelocity(
             {static_cast<float>(current_velocity_norm *
@@ -405,11 +413,11 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
                                 current_velocity_normalized.y)});
       }
 
-    } // Player update ends
+    }  // Player update ends
 
     for (int i = 0; i < EGG_COUNT; i++) {
       continue;
-    } // Egg update ends
+    }  // Egg update ends
 
     // Process slipping players
     for (auto i = slip_players_list.begin(); i != slip_players_list.end();
@@ -423,7 +431,7 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
     }
 
     b2world->Step(timestep, velocityIterations,
-                  positionIterations); // do the simulation
+                  positionIterations);  // do the simulation
 
     for (int i = 0; i < PLAYER_COUNT; i++) {
       players[i]->set_position(
@@ -439,7 +447,7 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
     }
 
     for (int k = 0; k < 3; k++) {
-        score[k] = 0;
+      score[k] = 0;
     }
 
     for (int i = 0; i < EGG_COUNT; i++) {
@@ -453,17 +461,17 @@ bool thuai::World::Update(int FPS, int32 velocityIterations,
         double eggangle = atan2(static_cast<float>(b2eggs[i]->GetPosition().y),
                                 static_cast<float>(b2eggs[i]->GetPosition().x));
         if (eggangle < 0) {
-            eggangle += 2 * pi;
+          eggangle += 2 * pi;
         }
         for (int k = 0; k < 3; k++) {
-          if (eggangle < 2 * (k+1) * pi / 3) {
+          if (eggangle < 2 * (k + 1) * pi / 3) {
             score[k] += eggs[i]->score();
             break;
           }
         }
       }
     }
-  } catch (std::exception &e) {
+  } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return false;
   }
@@ -480,7 +488,7 @@ nlohmann::json World::output_to_ai(int state) const {
     ret["eggs"][i] = {
         {"position", eggs[i]->position()},
         {"holder", -1},
-        {"score", eggs[i]->score()} // set this later
+        {"score", eggs[i]->score()}  // set this later
     };
   }
   for (int i = 0; i < PLAYER_COUNT; i++) {
@@ -492,8 +500,9 @@ nlohmann::json World::output_to_ai(int state) const {
     }
     ret["teams"][team][sub_id] = {{"position", players[i]->position()},
                                   {"status", players[i]->status()},
-                                  {"facing", facing}};
+                                  {"facing", facing},
+                                  {"endurance", players[i]->endurance()}};
   }
   return ret;
 }
-} // namespace thuai
+}  // namespace thuai
