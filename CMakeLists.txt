@@ -15,9 +15,9 @@ if(LOCAL)
 endif()
 
 # strange bug on windows
-if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-  set(unofficial-box2d_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x64-windows/share/unofficial-box2d")
-endif(CMAKE_SYSTEM_NAME MATCHES "Windows")
+# if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+#  set(unofficial-box2d_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tools/vcpkg/installed/x64-windows/share/unofficial-box2d")
+# endif(CMAKE_SYSTEM_NAME MATCHES "Windows")
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
@@ -47,7 +47,7 @@ file(GLOB SOURCES "*.cpp" "include/record-sdk/cpp_record_sdk/entities.cpp" "incl
 # add the executable
 add_executable(main ${SOURCES})
 
-find_package(unofficial-box2d CONFIG REQUIRED)
+find_package(box2d CONFIG REQUIRED)
 target_include_directories(main PRIVATE include/cpp_record_sdk)
-target_link_libraries(main PRIVATE unofficial::box2d::box2d)
+target_link_libraries(main PRIVATE box2d::box2d)
 target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
