@@ -69,6 +69,9 @@ jobs:
           ./vcpkg integrate install
           ./vcpkg install box2d
       
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Install vcpkg on Windows
         if: matrix.config.os == 'windows-2019'
         shell: pwsh
