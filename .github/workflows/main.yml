@@ -61,8 +61,7 @@ jobs:
           sudo apt-get install xorg-dev libglu1-mesa-dev
           sudo apt-get install libxrandr-dev
 
-      - name: Install vcpkg on unix-like systems
-        if: matrix.config.os != 'windows-2019'
+      - name: Install vcpkg & box2d
         working-directory: ./tools/vcpkg
         timeout-minutes: 10
         run: |
@@ -70,25 +69,19 @@ jobs:
           ./bootstrap-vcpkg.sh
           ./vcpkg update
           ./vcpkg integrate install
-          ./vcpkg install box2d
-
-      - name: Install vcpkg on Windows
-        if: matrix.config.os == 'windows-2019'
-        shell: pwsh
-        timeout-minutes: 10
-        working-directory: .\tools\vcpkg
-        run: |
-          .\bootstrap-vcpkg.bat
-          .\vcpkg update
-          .\vcpkg integrate install
-          .\vcpkg install box2d
+          $os="${{matrix.config.os}}"
+          if ($os -like '*windows*') {
+            ./vcpkg install box2d:x64-windows
+          } else {
+            ./vcpkg install box2d
+          }
       
-      - name: Swith to clang++ on Ubuntu
-        if: matrix.config.os == 'ubuntu-16.04'
-        run: |
-          sudo apt-get install clang
-          sudo update-alternatives --set cc `which clang`
-          sudo update-alternatives --set c++ `which clang++`
+      # - name: Swith to clang++ on Ubuntu
+      #   if: matrix.config.os == 'ubuntu-16.04'
+      #   run: |
+      #     sudo apt-get install clang
+      #     sudo update-alternatives --set cc `which clang`
+      #     sudo update-alternatives --set c++ `which clang++`
       
       - name: Add msbuild to PATH
         if: matrix.config.os == 'windows-2019'
