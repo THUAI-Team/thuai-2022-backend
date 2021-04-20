@@ -58,6 +58,10 @@ jobs:
         if: matrix.config.os == 'ubuntu-16.04'
         run: sudo apt-get install libxrandr-dev
 
+      
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        
       - name: Install vcpkg on unix-like systems
         if: matrix.config.os != 'windows-2019'
         working-directory: ./tools/vcpkg
@@ -68,9 +72,6 @@ jobs:
           ./vcpkg update
           ./vcpkg integrate install
           ./vcpkg install box2d
-      
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: Install vcpkg on Windows
         if: matrix.config.os == 'windows-2019'
