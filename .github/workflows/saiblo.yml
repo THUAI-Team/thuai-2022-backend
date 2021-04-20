@@ -47,12 +47,6 @@ jobs:
           ./vcpkg integrate install
           ./vcpkg install box2d
 
-      - name: Swith to clang++ on Ubuntu
-        run: |
-          sudo apt-get install clang
-          sudo update-alternatives --set cc `which clang`
-          sudo update-alternatives --set c++ `which clang++`
-
       - name: Build the executable
         shell: pwsh
         run: |
