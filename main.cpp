@@ -123,9 +123,9 @@ int main(int argc, char **argv) {
           if (verbose) {
             std::cerr << "Got detail from player" << incoming_msg["player"] << ":" << detail << std::endl;
           } 
-          if (detail["state"] == state && !received_info[incoming_msg["player"]]) { 
+          if (detail["state"] == state && !received_info[(int)incoming_msg["player"]]) { 
             // ensure that state is synchronized, and this reply comes before "timeout" directive
-            received_info[incoming_msg["player"]] = true;
+            received_info[(int)incoming_msg["player"]] = true;
             // parse the action of AI: walking/stopped/running; which egg to try
             // grabbing
             world->read_from_team_action(incoming_msg["player"], detail);
@@ -135,9 +135,9 @@ int main(int argc, char **argv) {
               json::parse(std::string(incoming_msg["content"]));
           std::cerr << "Error from judger:" << error_content << std::endl;
           if (error_content["error"] == 0) {
-            is_offline[error_content["player"]] = true; // 掉线了
+            is_offline[(int)error_content["player"]] = true; // 掉线了
           } else if (error_content["error"] == 1) { // err in document: this should be an timeout
-            received_info[error_content["player"]] = true; // 超时了
+            received_info[(int)error_content["player"]] = true; // 超时了
           }
         }
         round_end |= (received_info[0] || is_offline[0]) &&
@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
   std::cerr << "Scores:" << r_score << ',' << y_score << ',' << b_score << '\n';
 
   std::cerr << "Writing replay to file...\n";
-  std::ofstream of(std::string(init_msg["replay"]), std::ios::binary);
+  std::ofstream of(std::string(init_msg.at("replay")), std::ios::binary);
   record.serialize(of);
   of.close();
 

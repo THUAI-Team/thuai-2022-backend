@@ -56,12 +56,14 @@ jobs:
 
       - name: Get RandR Lib for Ubuntu
         if: matrix.config.os == 'ubuntu-16.04'
-        run: sudo apt-get install libxrandr-dev
+        run: |
+          sudo apt-get install xorg-dev libglu1-mesa-dev
+          sudo apt-get install libxrandr-dev
 
       
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        
+        ././
       - name: Install vcpkg on unix-like systems
         if: matrix.config.os != 'windows-2019'
         working-directory: ./tools/vcpkg
@@ -117,7 +119,6 @@ jobs:
             cmake .. -DCMAKE_BUILD_TYPE=Release
             cmake --build . 
           }
-          cmake --build . 
           ls .
           cd ..
 
