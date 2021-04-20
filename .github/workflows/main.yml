@@ -65,7 +65,6 @@ jobs:
         working-directory: ./tools/vcpkg
         timeout-minutes: 10
         run: |
-          ls -al
           ./bootstrap-vcpkg.sh
           ./vcpkg update
           ./vcpkg integrate install
