@@ -1,0 +1,7 @@
+{
+  "name": "thuai-egg-2021-backend",
+  "version": "1.0.0",
+  "dependencies": [
+      "box2d"
+  ]
+}
