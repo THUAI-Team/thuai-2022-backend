@@ -232,7 +232,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
       current_player->set_status(new_status);
     }
     //--------- handle egg placement ---------
-    if (!player_action["drop"].is_null()) {
+    if (!player_action["drop"].is_null() && current_player->egg() != -1) {
       const double radian = player_action["drop"];
       // resolve if two eggs to be placed at conflicted posistion
       double mindis = EGG_RADIUS + std::min(EGG_RADIUS, PLAYER_RADIUS);
