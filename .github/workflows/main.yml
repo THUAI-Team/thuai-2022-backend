@@ -60,10 +60,7 @@ jobs:
           sudo apt-get install xorg-dev libglu1-mesa-dev
           sudo apt-get install libxrandr-dev
 
-      
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        ././
+
       - name: Install vcpkg on unix-like systems
         if: matrix.config.os != 'windows-2019'
         working-directory: ./tools/vcpkg
