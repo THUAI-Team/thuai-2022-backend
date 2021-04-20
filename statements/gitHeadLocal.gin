@@ -1,17 +1,17 @@
 \usepackage[%
-        shash={9b6243c},
-        lhash={9b6243c1bafc517d7f97d7b1a665d4e76a9a05d9},
+        shash={0556418},
+        lhash={0556418543703366004939b60fe4df723604390a},
         authname={panda2134},
         authemail={ljypanda@live.com},
         authsdate={2021-04-20},
-        authidate={2021-04-20 13:52:42 +0800},
-        authudate={1618897962},
+        authidate={2021-04-20 13:56:12 +0800},
+        authudate={1618898172},
         commname={panda2134},
         commemail={ljypanda@live.com},
         commsdate={2021-04-20},
-        commidate={2021-04-20 13:52:42 +0800},
-        commudate={1618897962},
+        commidate={2021-04-20 13:56:12 +0800},
+        commudate={1618898172},
         refnames={ (HEAD -> master)},
-        firsttagdescribe={8120a6bb-1-g9b6243c-*},
-        reltag={9b6243c-*}
+        firsttagdescribe={9b6243c1-1-g0556418-*},
+        reltag={0556418-*}
     ]{gitexinfo}

@@ -68,7 +68,7 @@ jobs:
         run: |
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
-            .\bootstrap-vcpkg.sh
+            .\bootstrap-vcpkg.bat
             .\vcpkg update
             .\vcpkg integrate install
             .\vcpkg install box2d:x64-windows
