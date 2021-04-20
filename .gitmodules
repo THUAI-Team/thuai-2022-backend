@@ -1,6 +1,7 @@
 [submodule "vendor/json"]
 	path = include/json
 	url = https://github.com/nlohmann/json
+	branch = master
 [submodule "vendor/record-sdk"]
 	path = include/record-sdk
 	url = git@github.com:ssast-tech/thuai-egg-record-sdk.git
