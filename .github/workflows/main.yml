@@ -57,14 +57,9 @@ jobs:
       - name: Get RandR Lib for Ubuntu
         if: matrix.config.os == 'ubuntu-16.04'
         run: |
-<<<<<<< HEAD
           sudo apt-get update
           sudo apt-get install xorg-dev libglu1-mesa-dev
-=======
-          sudo apt-get install libglu1-mesa-dev
->>>>>>> d3fbcfe0b1394665feb2aea5c2d506d73200aee4
           sudo apt-get install libxrandr-dev
-
 
       - name: Install vcpkg on unix-like systems
         if: matrix.config.os != 'windows-2019'
