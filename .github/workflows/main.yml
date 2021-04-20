@@ -41,8 +41,8 @@ jobs:
       matrix:
         config:
           - os: ubuntu-16.04
-          # - os: macos-10.15
-          # - os: windows-2019
+          - os: macos-10.15
+          - os: windows-2019
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -57,6 +57,7 @@ jobs:
       - name: Get RandR Lib for Ubuntu
         if: matrix.config.os == 'ubuntu-16.04'
         run: |
+          sudo apt-get update
           sudo apt-get install xorg-dev libglu1-mesa-dev
           sudo apt-get install libxrandr-dev
 
