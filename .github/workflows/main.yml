@@ -64,14 +64,18 @@ jobs:
       - name: Install vcpkg & box2d
         working-directory: ./tools/vcpkg
         timeout-minutes: 10
+        shell: pwsh
         run: |
-          ./bootstrap-vcpkg.sh
-          ./vcpkg update
-          ./vcpkg integrate install
           $os="${{matrix.config.os}}"
           if ($os -like '*windows*') {
-            ./vcpkg install box2d:x64-windows
+            .\bootstrap-vcpkg.sh
+            .\vcpkg update
+            .\vcpkg integrate install
+            .\vcpkg install box2d:x64-windows
           } else {
+            ./bootstrap-vcpkg.sh
+            ./vcpkg update
+            ./vcpkg integrate install
             ./vcpkg install box2d
           }
       
