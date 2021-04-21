@@ -23,13 +23,8 @@ typedef struct b2bodydata {
       : m_p_player(_player), m_p_b2body(_b2body) {}
   b2bodydata(Egg* _egg, b2Body* _b2body) : m_p_egg(_egg), m_p_b2body(_b2body) {}
 } b2bodydata;
-void World::ContactListener::BeginContact(b2Contact* contact) {
-  // Before collision, modified if needed
-  return;
-}
 
-void World::ContactListener::EndContact(b2Contact* contact) {
-  // After collision
+void SetSlippedWhenContact(b2Contact* contact) { // private helper method
   std::vector<b2Body*> collision_items;
   collision_items.push_back(contact->GetFixtureA()->GetBody());
   collision_items.push_back(contact->GetFixtureB()->GetBody());
@@ -42,6 +37,16 @@ void World::ContactListener::EndContact(b2Contact* contact) {
       slip_players_list[body_data->m_p_player] = SLIP_FRAMES;
     }
   }
+}
+
+void World::ContactListener::BeginContact(b2Contact* contact) {
+  // Before collision, modified if needed
+  SetSlippedWhenContact(contact);
+}
+
+void World::ContactListener::EndContact(b2Contact* contact) {
+  // After collision
+  SetSlippedWhenContact(contact);
 }
 
 double get_walk_speed_with_egg(double egg_score) {
