@@ -36,7 +36,7 @@ jobs:
         uses: lukka/get-cmake@v3.19.2
 
       - name: Get RandR Lib for Ubuntu
-        run: sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
+        run: sudo apt-get update && sudo apt-get install xorg-dev libglu1-mesa-dev libxrandr-dev
 
       - name: Install vcpkg on unix-like systems
         working-directory: ./tools/vcpkg
@@ -46,12 +46,6 @@ jobs:
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
           ./vcpkg install box2d
-
-      - name: Swith to clang++ on Ubuntu
-        run: |
-          sudo apt-get install clang
-          sudo update-alternatives --set cc `which clang`
-          sudo update-alternatives --set c++ `which clang++`
 
       - name: Build the executable
         shell: pwsh
