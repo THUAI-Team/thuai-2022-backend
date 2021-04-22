@@ -41,7 +41,8 @@ void SetSlippedWhenContact(b2Contact* contact) { // private helper method
 
 void World::ContactListener::BeginContact(b2Contact* contact) {
   // Before collision, modified if needed
-  SetSlippedWhenContact(contact);
+  // temporarily remove this
+  // SetSlippedWhenContact(contact);
 }
 
 void World::ContactListener::EndContact(b2Contact* contact) {
