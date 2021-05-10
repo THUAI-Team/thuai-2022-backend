@@ -16,7 +16,6 @@ const double INNER_SPEED_REDUCE_RADIUS = 18.0,
              OUTER_SPEED_REDUCE_RADIUS = 20.0;
 const double SPEED_ON_SPEED_REDUCE = .5;
 const int SLIP_FRAMES = 90;
-
 double
 get_walk_speed_with_egg(double);
 struct World{
@@ -29,7 +28,8 @@ struct World{
   int score[3];
   Player* players[PLAYER_COUNT];
   Egg* eggs[EGG_COUNT];
-
+  int vertex_count = 0;
+  b2Vec2 ve[360];
   b2Body* b2players[PLAYER_COUNT];
   b2Body* b2eggs[EGG_COUNT];
   b2World* b2world{ nullptr };
@@ -38,6 +38,7 @@ struct World{
   json output_to_ai(int) const;
   void read_from_team_action(Team team, json detail);
   ContactListener* m_contactlistener{ nullptr };
+  int pnpoly(Vec2D pos); // return if pos is within the playground
   World();
   ~World();
 };

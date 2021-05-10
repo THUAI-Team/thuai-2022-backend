@@ -74,6 +74,17 @@ double get_distance(const Vec2D& pos1, const b2Body* const obj2) {
       (pos1.y - obj2->GetPosition().y) * (pos1.y - obj2->GetPosition().y));
 }
 
+int World::pnpoly(Vec2D pos) {
+  bool c = false;
+  for (int i = 0, j = vertex_count - 1; i < vertex_count; j = i++) {
+    if (((ve[i].y > pos.y) != (ve[j].y > pos.y)) &&
+        (pos.x < (ve[j].x - ve[i].x) * (pos.y - ve[i].y) / (ve[j].y - ve[i].y) +
+                     ve[i].x))
+      c = !c;
+  }
+  return c;
+}
+
 World::World() {
   {
     const double angle_delta = 2 * pi / 15, player_radius = DIAMETER / 4;
@@ -110,8 +121,6 @@ World::World() {
     this->m_contactlistener = new ContactListener();
     b2world->SetContactListener(m_contactlistener);
     b2BodyDef groundBodyDef;
-    int vertex_count = 0;
-    b2Vec2 ve[360];
     const float half_angel_of_per_goal =
         asin(float(GOAL_LENGTH) / float(DIAMETER));  // caution of int / int !!!
     for (int i = 0; i < 360;
@@ -246,6 +255,10 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
                                     cos(radian) * (PLAYER_RADIUS + EGG_RADIUS),
                                 b2players[player_id]->GetPosition().y +
                                     sin(radian) * (PLAYER_RADIUS + EGG_RADIUS)};
+
+      if (!pnpoly(pos_to_be_placed))
+        break;
+
       bool can_be_placed = true;
       for (auto egg : b2eggs) {
         if (egg == nullptr)
@@ -330,6 +343,7 @@ void World::read_from_team_action(Team team, nlohmann::json detail) {
   }
 }
 
+
 void thuai::World::addEgg(int index) {
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
@@ -342,7 +356,7 @@ void thuai::World::addEgg(int index) {
   dynamicBox.m_radius = static_cast<float>(EGG_RADIUS);
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &dynamicBox;
-  fixtureDef.friction = 0;
+  fixtureDef.friction = 0.25f;
   b2eggs[index]->CreateFixture(&fixtureDef);
   b2MassData massdata;
   massdata.mass = 30;
