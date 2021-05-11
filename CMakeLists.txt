@@ -47,7 +47,7 @@ file(GLOB SOURCES "*.cpp" "include/record-sdk/cpp_record_sdk/entities.cpp" "incl
 # add the executable
 add_executable(main ${SOURCES})
 
-find_package(box2d CONFIG REQUIRED)
 target_include_directories(main PRIVATE include/cpp_record_sdk)
-target_link_libraries(main PRIVATE box2d::box2d)
+find_package(unofficial-box2d CONFIG REQUIRED)
+target_link_libraries(main PRIVATE unofficial::box2d::box2d)
 target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
