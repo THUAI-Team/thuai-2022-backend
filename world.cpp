@@ -185,7 +185,7 @@ World::World() {
                            static_cast<float>(players[i]->position().y));
       b2players[i] = b2world->CreateBody(&bodyDef);
       b2players[i]->GetUserData() = 
-        reinterpret_cast<uintptr_t>(new b2bodydata{players[i], b2players[i]});
+        reinterpret_cast<void *>(new b2bodydata{players[i], b2players[i]});
       b2CircleShape dynamicBox;
       dynamicBox.m_radius = static_cast<float>(PLAYER_RADIUS);
       b2FixtureDef fixtureDef;
@@ -351,7 +351,7 @@ void thuai::World::addEgg(int index) {
                        static_cast<float>(eggs[index]->position().y));
   b2eggs[index] = b2world->CreateBody(&bodyDef);
   b2eggs[index]->GetUserData() =
-    reinterpret_cast<uintptr_t>(new b2bodydata(eggs[index], b2eggs[index]));
+    reinterpret_cast<void *>(new b2bodydata(eggs[index], b2eggs[index]));
   b2CircleShape dynamicBox;
   dynamicBox.m_radius = static_cast<float>(EGG_RADIUS);
   b2FixtureDef fixtureDef;
