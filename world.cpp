@@ -30,7 +30,7 @@ void SetSlippedWhenContact(b2Contact* contact) { // private helper method
   collision_items.push_back(contact->GetFixtureB()->GetBody());
 
   for (auto item : collision_items) {
-    auto body_data = reinterpret_cast<b2bodydata*>(item->GetUserData().pointer);
+    auto body_data = reinterpret_cast<b2bodydata*>(item->GetUserData());
     if (body_data != nullptr && body_data->m_p_player != nullptr) {
       body_data->m_p_b2body->SetLinearVelocity({.0, .0});
       body_data->m_p_player->set_status(PlayerStatus::SLIPPED);
@@ -184,7 +184,7 @@ World::World() {
       bodyDef.position.Set(static_cast<float>(players[i]->position().x),
                            static_cast<float>(players[i]->position().y));
       b2players[i] = b2world->CreateBody(&bodyDef);
-      b2players[i]->GetUserData().pointer = 
+      b2players[i]->GetUserData() = 
         reinterpret_cast<uintptr_t>(new b2bodydata{players[i], b2players[i]});
       b2CircleShape dynamicBox;
       dynamicBox.m_radius = static_cast<float>(PLAYER_RADIUS);
@@ -350,7 +350,7 @@ void thuai::World::addEgg(int index) {
   bodyDef.position.Set(static_cast<float>(eggs[index]->position().x),
                        static_cast<float>(eggs[index]->position().y));
   b2eggs[index] = b2world->CreateBody(&bodyDef);
-  b2eggs[index]->GetUserData().pointer =
+  b2eggs[index]->GetUserData() =
     reinterpret_cast<uintptr_t>(new b2bodydata(eggs[index], b2eggs[index]));
   b2CircleShape dynamicBox;
   dynamicBox.m_radius = static_cast<float>(EGG_RADIUS);
