@@ -348,6 +348,7 @@ void thuai::World::addEgg(int index) {
   bodyDef.type = b2_dynamicBody;
   bodyDef.position.Set(static_cast<float>(eggs[index]->position().x),
                        static_cast<float>(eggs[index]->position().y));
+  bodyDef.linearDamping = 0.25f;
   b2eggs[index] = b2world->CreateBody(&bodyDef);
   b2eggs[index]->SetUserData(new b2bodydata(eggs[index], b2eggs[index]));
   b2CircleShape dynamicBox;
